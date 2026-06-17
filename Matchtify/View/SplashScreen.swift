@@ -8,6 +8,9 @@
 import SwiftUI
 
 struct SplashScreen: View {
+    @AppStorage("hasCompletedOnboarding")
+    private var hasCompletedOnboarding = false
+    
     private let albumRows = [
         ["asset-1", "asset-2", "asset-3"],
         ["asset-4", "asset-5", "asset-6"],
@@ -42,7 +45,7 @@ struct SplashScreen: View {
                 // Bottom Content
                 VStack (spacing: 32) {
                     
-                    // Texts
+                    // Text Container
                     VStack (spacing: 16) {
                         
                         // Text Title
@@ -58,7 +61,7 @@ struct SplashScreen: View {
                         
                         // Button Get Started
                         Button {
-                            
+                            hasCompletedOnboarding = true
                         } label: {
                             Text("Get started")
                                 .font(.headline)
