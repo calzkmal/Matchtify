@@ -10,6 +10,8 @@ import AVFoundation
 
 struct MatchSong: View {
     @StateObject private var audioManager = AudioManager()
+    @State private var scrubProgress: Double = 0
+    @State private var isScrubbing = false
     
     let currentStep: Int = 1
     let totalSteps: Int = 4
@@ -66,6 +68,7 @@ struct MatchSong: View {
                         .frame(width: 280, height: 280)
                         .clipShape(RoundedRectangle(cornerRadius: 16))
                     
+                    // Play Audio
                     Button {
                         audioManager.togglePlayback()
                     } label: {
@@ -77,6 +80,43 @@ struct MatchSong: View {
                             .clipShape(.circle)
                     }
                 }
+
+                VStack(spacing: 8) {
+                    Slider(
+                        value: Binding(
+                            get: {
+                                isScrubbing
+                                    ? scrubProgress
+                                    : audioManager.progress
+                            },
+                            set: { newValue in
+                                scrubProgress = newValue
+                            }
+                        ),
+                        in: 0...1,
+                        onEditingChanged: { editing in
+                            if editing {
+                                isScrubbing = true
+                                scrubProgress = audioManager.progress
+                            } else {
+                                audioManager.seek(to: scrubProgress)
+                                isScrubbing = false
+                            }
+                        }
+                    )
+                    .tint(.indigo)
+                    .disabled(audioManager.duration == 0)
+
+                    HStack {
+                        Text(audioManager.elapsedText)
+                        Spacer()
+                        Text(audioManager.remainingText)
+                    }
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                }
+                .frame(width: 280)
+                .padding(.top, 8)
             }
             
             // Button
