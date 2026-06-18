@@ -142,6 +142,11 @@ struct MatchSong: View {
             
             // Text
             Text(song.title)
+                .font(.title2)
+                .fontWeight(.bold)
+            
+            Text(song.)
+            
             
             // Button
             HStack {

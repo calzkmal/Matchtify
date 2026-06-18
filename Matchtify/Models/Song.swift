@@ -13,5 +13,6 @@ struct Song: Identifiable {
     let audioFile: String
     let albumImage: String
     let title: String
+    let artist: String
     let genre: String
 }
