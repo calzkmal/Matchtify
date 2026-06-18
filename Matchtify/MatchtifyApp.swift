@@ -9,6 +9,7 @@ import SwiftUI
 
 @main
 struct MatchtifyApp: App {
+    @State private var selectedSong = SongLibrary.randomSong
     
     @AppStorage("hasCompletedOnboarding")
     private var hasCompletedOnboarding: Bool = false
@@ -16,7 +17,7 @@ struct MatchtifyApp: App {
     var body: some Scene {
         WindowGroup {
             if hasCompletedOnboarding {
-                MatchSong()
+                MatchSong(song: SongLibrary.randomSong)
             } else {
                 SplashScreen()
             }
