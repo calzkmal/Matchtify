@@ -9,9 +9,16 @@ import SwiftUI
 
 @main
 struct MatchtifyApp: App {
+    @AppStorage("hasCompletedOnboarding")
+    private var hasCompletedOnboarding: Bool = false
+    
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            if hasCompletedOnboarding {
+                MatchSong(song: SongLibrary.randomSong)
+            } else {
+                SplashScreen()
+            }
         }
     }
 }
