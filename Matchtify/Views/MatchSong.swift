@@ -145,17 +145,23 @@ struct MatchSong: View {
                 .font(.title2)
                 .fontWeight(.bold)
             
-            Text(song.)
-            
+            Text(song.artist)
+                .font(.headline)
             
             // Button
             HStack {
-                
+                Button {
+                    
+                } label: {
+                    Text("Anjay")
+                }
             }
         }
     }
 }
 
 #Preview {
-    MatchSong(song: SongLibrary.randomSong)
+    if let song = SongLibrary.songs.first {
+            MatchSong(song: song)
+        }
 }

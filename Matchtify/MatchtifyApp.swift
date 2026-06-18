@@ -9,8 +9,6 @@ import SwiftUI
 
 @main
 struct MatchtifyApp: App {
-    @State private var selectedSong = SongLibrary.randomSong
-    
     @AppStorage("hasCompletedOnboarding")
     private var hasCompletedOnboarding: Bool = false
     
