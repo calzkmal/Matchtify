@@ -33,16 +33,12 @@ struct SplashScreen: View {
     
     // AlbumRows container
     private var albumRows: [[String]] {
-        let albums = Array(
-            Set(
-                SongLibrary.songs.map(\.albumImage)
-            )
-        )
-        .sorted()
-        
+
+        let albums = SongLibrary.songs.map(\.albumImage)
+
         return stride(from: 0, to: albums.count, by: 3).map {
-                Array(albums[$0..<min($0 + 3, albums.count)])
-            }
+            Array(albums[$0..<min($0 + 3, albums.count)])
+        }
     }
     
     var body: some View {
@@ -83,7 +79,7 @@ struct SplashScreen: View {
                     }
                 
                     // Buttons
-                    VStack (spacing: 16) {
+                    VStack (spacing: 8) {
                         
                         // Button Get Started
                         Button {
@@ -93,7 +89,7 @@ struct SplashScreen: View {
                                 .font(.headline)
                                 .foregroundStyle(Color.white)
                                 .frame(maxWidth: .infinity)
-                                .padding()
+                                .padding(.vertical, 12)
                                 .clipShape(RoundedRectangle(cornerRadius: 8))
                         }
                         .buttonStyle(.glassProminent)
@@ -105,13 +101,14 @@ struct SplashScreen: View {
                         } label: {
                             Text("Log in")
                                 .font(.headline)
-                                .foregroundStyle(Color.primary)
+                                .foregroundStyle(Color.black)
                                 .frame(maxWidth: .infinity)
-                                .padding()
+                                .padding(.vertical, 12)
                                 .clipShape(RoundedRectangle(cornerRadius: 8))
                         }
-                        .buttonStyle(.glass)
-                        .tint(.clear)
+                        // STYLE NYA GINI
+                        .buttonStyle(.glassProminent)
+                        .tint(Color.secondary.opacity(0.5))
                     }
                 }
                 .padding(.horizontal, 24)

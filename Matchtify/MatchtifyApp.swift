@@ -15,7 +15,7 @@ struct MatchtifyApp: App {
     var body: some Scene {
         WindowGroup {
             if hasCompletedOnboarding {
-                MatchSong(song: SongLibrary.randomSong)
+                HomePage()
             } else {
                 SplashScreen()
             }

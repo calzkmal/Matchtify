@@ -23,7 +23,7 @@ struct SongLibrary {
             .filter {
                 $0.hasSuffix(".mp3")
             }
-            .compactMap { file in
+            .compactMap { file -> Song? in
 
                 let filename = file.replacingOccurrences(
                     of: ".mp3",
@@ -34,7 +34,7 @@ struct SongLibrary {
                     separatedBy: "_"
                 )
 
-                guard parts.count == 5 else {
+                guard parts.count == 6, let year = Int(parts[5]) else {
                     return nil
                 }
 
@@ -43,7 +43,8 @@ struct SongLibrary {
                     albumImage: parts[1],
                     title: parts[2].replacingOccurrences(of: "-", with: " "),
                     artist: parts[3].replacingOccurrences(of: "-", with: " "),
-                    genre: parts[4]
+                    genre: parts[4],
+                    year: year
                 )
             }
     }

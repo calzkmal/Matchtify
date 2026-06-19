@@ -15,4 +15,5 @@ struct Song: Identifiable {
     let title: String
     let artist: String
     let genre: String
+    let year: Int
 }
