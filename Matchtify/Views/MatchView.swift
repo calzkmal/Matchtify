@@ -11,12 +11,22 @@ struct MatchView: View {
     @EnvironmentObject var audioManager: AudioManager
     
     // Setup Genre List
-    @State private var selectedGenre: String?
+    @State private var selectedGenre =
+        Array(Set(SongLibrary.songs.map(\.genre))).sorted().first ?? ""
     
     private let genres = Array(
             Set(SongLibrary.songs.map(\.genre))
         ).sorted()
     
+    // Song selector
+    
+    private var filteredSongs: [Song] {
+        SongLibrary.songs.filter {
+            $0.genre == selectedGenre
+        }
+    }
+    
+    // Size for album
     private let albumSize: CGFloat = 280
     
     var body: some View {
@@ -39,11 +49,17 @@ struct MatchView: View {
                         .clipShape(Circle())
                 }
                 
+                // MARK: Scrollable Genres
                 ScrollView (.horizontal, showsIndicators: false) {
                     HStack {
                         ForEach(genres, id: \.self) { genre in
                             Button {
                                 selectedGenre = genre
+                                if let randomSong = SongLibrary.songs
+                                    .filter ({ $0.genre == genre })
+                                    .randomElement() {
+                                    audioManager.loadSong(randomSong)
+                                }
                             } label: {
                                 Text(genre)
                                     .font(.footnote)
@@ -68,7 +84,7 @@ struct MatchView: View {
                 // MARK: Card Area
                 VStack {
                     ZStack {
-                        Image(audioManager.song.albumImage)
+                        Image(audioManager.currentSong.albumImage)
                             .resizable()
                             .scaledToFill()
                             .frame(width: albumSize, height: albumSize)
@@ -113,6 +129,9 @@ struct MatchView: View {
                 }
             }
             .padding(.horizontal, 24)
+        }
+        .onAppear {
+            audioManager.loadRandomSong(for: selectedGenre)
         }
     }
 }
