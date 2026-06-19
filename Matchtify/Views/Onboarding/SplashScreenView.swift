@@ -56,7 +56,7 @@ struct SplashScreen: View {
                     // Albums
                     ForEach(Array(albumRows.prefix(visibleRows).enumerated()),
                             id: \.offset) { index, assets in
-                        AlbumRowView(
+                        AlbumRow(
                             assets: assets,
                             alignment: index.isMultiple(of: 2)
                                 ? .leading

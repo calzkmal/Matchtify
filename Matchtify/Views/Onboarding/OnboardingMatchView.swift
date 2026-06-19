@@ -192,6 +192,7 @@ struct MatchSong: View {
                             }
                         }
                         
+                        // That capsule thingy
                         Text(song.genre)
                             .font(.footnote)
                             .foregroundStyle(Color.secondary)

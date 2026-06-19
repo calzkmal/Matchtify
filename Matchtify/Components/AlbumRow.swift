@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct AlbumRowView: View {
+struct AlbumRow: View {
 
     let assets: [String]
     let alignment: Alignment

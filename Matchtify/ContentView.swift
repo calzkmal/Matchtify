@@ -58,10 +58,10 @@ struct ContentView: View {
                     )
                     .id(currentSong.id)
                 } else {
-                    HomePage()
+                    MatchPageView()
                 }
             case .home:
-                HomePage()
+                MatchPageView()
             }
         }
     }
