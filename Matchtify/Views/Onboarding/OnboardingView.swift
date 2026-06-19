@@ -18,10 +18,6 @@ struct OnboardingView: View {
         dynamicTypeSize.isAccessibilitySize
     }
     
-    private var albumSize: CGFloat {
-        dynamicTypeSize.isAccessibilitySize ? 220 : 280
-    }
-    
     let song: Song
 
     @Binding var currentStep: Int
@@ -88,12 +84,13 @@ struct OnboardingView: View {
                             Image(song.albumImage)
                                 .resizable()
                                 .scaledToFill()
-                                .frame(width: albumSize, height: albumSize)
+                                .frame(maxWidth: .infinity)
                                 .clipShape(RoundedRectangle(cornerRadius: 16))
                                 .overlay {
                                     RoundedRectangle(cornerRadius: 16)
                                         .strokeBorder(.primary.opacity(0.3))
                                 }
+                                .padding(.horizontal, 24)
                             
                             // Play Audio
                             Button {
@@ -104,7 +101,9 @@ struct OnboardingView: View {
                                     .foregroundStyle(Color.primary)
                                     .frame(width: 80, height: 80)
                             }
-                            .glassEffect(.regular)
+                            .buttonStyle(.glassProminent)
+                            .tint(Color.secondary.opacity(0.5))
+                            .clipShape(Circle())
                         }
                         
                         // Slider Player
@@ -126,7 +125,7 @@ struct OnboardingView: View {
                             .font(.caption)
                             .foregroundStyle(.secondary)
                         }
-                        .frame(width: 280)
+                        .padding(.horizontal, 24)
                     }
                     
                     VStack (spacing: 8) {
@@ -178,7 +177,7 @@ struct OnboardingView: View {
                         Image(systemName: "xmark")
                             .font(.system(.title, weight: .medium))
                             .foregroundStyle(Color.primary)
-                            .frame(width: 80, height: 80)
+                            .frame(width: 64, height: 64)
                     }
                     // STYLE NYA GINI
                     .buttonStyle(.glassProminent)
@@ -193,7 +192,7 @@ struct OnboardingView: View {
                         Image(systemName: "checkmark")
                             .font(.system(.title, weight: .medium))
                             .foregroundStyle(Color.white)
-                            .frame(width: 80, height: 80)
+                            .frame(width: 64, height: 64)
                     }
                     .buttonStyle(.glassProminent)
                     .tint(Color.indigo)
