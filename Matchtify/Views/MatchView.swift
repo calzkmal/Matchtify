@@ -118,5 +118,5 @@ struct MatchView: View {
 }
 
 #Preview {
-    MatchView()
+    MatchView().environmentObject(AudioManager.preview)
 }

@@ -206,7 +206,9 @@ struct OnboardingView: View {
 }
 
 #Preview {
-    if let song = SongLibrary.songs.first {
-        OnboardingView(song: song, currentStep: .constant(1))
-        }
+    OnboardingView(
+        song: SongLibrary.songs[0],
+        currentStep: .constant(1)
+    )
+    .environmentObject(AudioManager.preview)
 }

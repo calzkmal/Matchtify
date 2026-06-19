@@ -228,4 +228,11 @@ final class AudioManager: ObservableObject {
     deinit {
         displayTimer?.invalidate()
     }
+    
+}
+
+extension AudioManager {
+    static let preview = AudioManager(
+        song: SongLibrary.songs[0]
+    )
 }
