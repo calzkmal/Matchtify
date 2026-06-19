@@ -12,8 +12,7 @@ final class AudioManager: ObservableObject {
     @Published var isPlaying = false
     @Published var currentTime: TimeInterval = 0
     @Published var duration: TimeInterval = 0
-    
-    private let song: Song
+    @Published private(set) var currentSong: Song?
 
     private let engine = AVAudioEngine()
     private let playerNode = AVAudioPlayerNode()
@@ -30,14 +29,21 @@ final class AudioManager: ObservableObject {
 
     private var displayTimer: Timer?
 
-    init(song: Song) {
-        self.song = song
-        
+    init() {
         engine.attach(playerNode)
-        loadSong()
     }
 
-    private func loadSong() {
+    func load(song: Song) {
+        let shouldResume = isPlaying
+
+        stopDisplayTimer()
+        playerNode.stop()
+
+        isPlaying = false
+        currentTime = 0
+        duration = 0
+        currentSong = song
+
         guard let url = Bundle.main.url(
             forResource: song.audioFile,
             withExtension: "mp3")
@@ -57,6 +63,10 @@ final class AudioManager: ObservableObject {
             try engine.start()
 
             scheduleFile(from: 0)
+
+            if shouldResume {
+                play()
+            }
         } catch {
             print("Failed to load song: \(error.localizedDescription)")
         }

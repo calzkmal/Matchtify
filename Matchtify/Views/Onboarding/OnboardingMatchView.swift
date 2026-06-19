@@ -26,7 +26,7 @@ struct MatchSong: View {
     var onNext: () -> Void = {}
     var onSkip: () -> Void = {}
 
-    @StateObject private var audioManager: AudioManager
+    @EnvironmentObject private var audioManager: AudioManager
     @State private var scrubProgress: Double = 0
     @State private var isScrubbing = false
 
@@ -42,10 +42,6 @@ struct MatchSong: View {
         self._currentStep = currentStep
         self.onNext = onNext
         self.onSkip = onSkip
-
-        _audioManager = StateObject(
-            wrappedValue: AudioManager(song: song)
-        )
     }
     
     var body: some View {
@@ -237,11 +233,15 @@ struct MatchSong: View {
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         }
+        .onAppear {
+            audioManager.load(song: song)
+        }
     }
 }
 
 #Preview {
     if let song = SongLibrary.songs.first {
         MatchSong(song: song, currentStep: .constant(1))
+            .environmentObject(AudioManager())
         }
 }

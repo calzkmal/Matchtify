@@ -85,4 +85,5 @@ private enum AppScreen {
 
 #Preview {
     ContentView()
+        .environmentObject(AudioManager())
 }
