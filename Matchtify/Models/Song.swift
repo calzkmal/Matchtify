@@ -8,7 +8,9 @@
 import Foundation
 
 struct Song: Identifiable {
-    let id = UUID()
+    var id: String {
+        audioFile
+    }
     
     let audioFile: String
     let albumImage: String

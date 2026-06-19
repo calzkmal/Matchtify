@@ -8,8 +8,7 @@
 import Foundation
 
 struct SongLibrary {
-
-    static var songs: [Song] {
+    static let songs: [Song] = {
 
         guard let resourcePath = Bundle.main.resourcePath else {
             return []
@@ -20,9 +19,7 @@ struct SongLibrary {
         )) ?? []
 
         return files
-            .filter {
-                $0.hasSuffix(".mp3")
-            }
+            .filter { $0.hasSuffix(".mp3") }
             .compactMap { file -> Song? in
 
                 let filename = file.replacingOccurrences(
@@ -34,7 +31,9 @@ struct SongLibrary {
                     separatedBy: "_"
                 )
 
-                guard parts.count == 6, let year = Int(parts[5]) else {
+                guard parts.count == 6,
+                      let year = Int(parts[5])
+                else {
                     return nil
                 }
 
@@ -47,7 +46,8 @@ struct SongLibrary {
                     year: year
                 )
             }
-    }
+
+    }()
 }
 
 extension SongLibrary {

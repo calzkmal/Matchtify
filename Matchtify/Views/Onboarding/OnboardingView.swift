@@ -17,8 +17,6 @@ struct OnboardingView: View {
     private var useAccessibilityLayout: Bool {
         dynamicTypeSize.isAccessibilitySize
     }
-    
-    let song: Song
 
     @Binding var currentStep: Int
     var onNext: () -> Void = {}
@@ -81,7 +79,7 @@ struct OnboardingView: View {
                     // Card
                     VStack {
                         ZStack {
-                            Image(song.albumImage)
+                            Image(audioManager.currentSong.albumImage)
                                 .resizable()
                                 .scaledToFill()
                                 .frame(maxWidth: .infinity)
@@ -130,7 +128,7 @@ struct OnboardingView: View {
                     
                     VStack (spacing: 8) {
                         // Text
-                        Text(song.title)
+                        Text(audioManager.currentSong.title)
                             .font(.title2)
                             .fontWeight(.bold)
                         
@@ -138,18 +136,18 @@ struct OnboardingView: View {
                         HStack {
                             if useAccessibilityLayout {
                                 VStack (spacing: 4) {
-                                    Text(song.artist)
-                                    Text(String(song.year))
+                                    Text(audioManager.currentSong.artist)
+                                    Text(String(audioManager.currentSong.year))
                                 }
                                 .font(.subheadline)
                                 .foregroundStyle(Color.secondary)
                             } else {
                                 HStack {
-                                    Text(song.artist)
+                                    Text(audioManager.currentSong.artist)
                                     Text("·")
                                     Text("Soundtrack")
                                     Text("·")
-                                    Text(String(song.year))
+                                    Text(String(audioManager.currentSong.year))
                                 }
                                 .font(.subheadline)
                                 .foregroundStyle(Color.secondary)
@@ -157,7 +155,7 @@ struct OnboardingView: View {
                         }
                         
                         // That capsule thingy
-                        Text(song.genre)
+                        Text(audioManager.currentSong.genre)
                             .font(.footnote)
                             .foregroundStyle(Color.secondary)
                             .padding(.horizontal, 8)
@@ -166,13 +164,12 @@ struct OnboardingView: View {
                     }
                 }
                 
-                
                 // Button
                 HStack (spacing: 16) {
                     // Dislike
                     Button {
                         currentStep += 1
-                        onNext()
+                        audioManager.nextSong()
                     } label: {
                         Image(systemName: "xmark")
                             .font(.system(.title, weight: .medium))
@@ -187,7 +184,7 @@ struct OnboardingView: View {
                     // Like
                     Button {
                         currentStep += 1
-                        onNext()
+                        audioManager.nextSong()
                     } label: {
                         Image(systemName: "checkmark")
                             .font(.system(.title, weight: .medium))
@@ -206,7 +203,6 @@ struct OnboardingView: View {
 
 #Preview {
     OnboardingView(
-        song: SongLibrary.songs[0],
         currentStep: .constant(1)
     )
     .environmentObject(AudioManager.preview)

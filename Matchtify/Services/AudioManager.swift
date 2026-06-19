@@ -58,17 +58,26 @@ final class AudioManager: ObservableObject {
             return
         }
 
-        currentSong = song
+        let wasPlaying = isPlaying
 
         playerNode.stop()
         stopDisplayTimer()
 
+        isPlaying = false
+
+        currentSong = song
+
         currentTime = 0
+        duration = 0
+
+        scrubProgress = 0
+        isScrubbing = false
+
         seekFrameOffset = 0
 
         loadSongFile(song)
 
-        if isPlaying {
+        if wasPlaying {
             play()
         }
     }
@@ -110,6 +119,24 @@ final class AudioManager: ObservableObject {
         } catch {
             print("Failed to load song: \(error.localizedDescription)")
         }
+    }
+    
+    func nextSong() {
+
+        guard let currentIndex =
+            SongLibrary.songs.firstIndex(where: {
+                $0.id == currentSong.id
+            })
+        else {
+            return
+        }
+
+        let nextIndex =
+            (currentIndex + 1) % SongLibrary.songs.count
+
+        loadSong(
+            SongLibrary.songs[nextIndex]
+        )
     }
 
     // MARK: - Playback Controls

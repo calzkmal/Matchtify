@@ -11,14 +11,12 @@ struct ContentView: View {
     @StateObject private var audioManager =
         AudioManager(song: SongLibrary.songs[0])
     
-    private let songs = SongLibrary.songs
     private let totalSteps = 4
 
     @AppStorage("hasCompletedOnboarding")
     private var hasCompletedOnboarding = false
 
     @State private var screen: AppScreen = .splash
-    @State private var currentSongIndex = 0
     @State private var currentStep = 1
 
     init() {
@@ -34,50 +32,35 @@ struct ContentView: View {
             case .splash:
                 SplashScreen {
                     hasCompletedOnboarding = true
-                    currentSongIndex = 0
                     currentStep = 1
                     screen = .match
                 }
             case .match:
-                if let currentSong = currentSong {
-                    OnboardingView(
-                        song: currentSong,
-                        currentStep: Binding(
-                            get: { currentStep },
-                            set: { newValue in
-                                if newValue > totalSteps {
-                                    currentStep = 1
-                                    screen = .home
-                                } else {
-                                    currentStep = newValue
-                                }
+                OnboardingView(
+                    currentStep: Binding(
+                        get: { currentStep },
+                        set: { newValue in
+                            if newValue > totalSteps {
+                                currentStep = 1
+                                screen = .home
+                            } else {
+                                currentStep = newValue
                             }
-                        ),
-                        onNext: advanceToNextSong,
-                        onSkip: {
-                            currentStep = 1
-                            screen = .home
                         }
-                    )
-                    .id(currentSong.id)
-                } else {
-                    MatchView()
-                }
+                    ),
+                    onNext: {
+                        audioManager.nextSong()
+                    },
+                    onSkip: {
+                        currentStep = 1
+                        screen = .home
+                    }
+                )
             case .home:
                 MatchView()
             }
         }
         .environmentObject(audioManager)
-    }
-
-    private var currentSong: Song? {
-        guard !songs.isEmpty else { return nil }
-        return songs[currentSongIndex % songs.count]
-    }
-
-    private func advanceToNextSong() {
-        guard !songs.isEmpty else { return }
-        currentSongIndex = (currentSongIndex + 1) % songs.count
     }
 }
 
