@@ -34,9 +34,7 @@ struct SplashScreen: View {
     
     // AlbumRows container
     private var albumRows: [[String]] {
-
         let albums = SongLibrary.songs.map(\.albumImage)
-
         return stride(from: 0, to: albums.count, by: 3).map {
             Array(albums[$0..<min($0 + 3, albums.count)])
         }
