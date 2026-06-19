@@ -27,9 +27,10 @@ struct SplashScreen: View {
         }
     }
     
-    // Setup on onboarding process to go to MatchView
-    @AppStorage("hasCompletedOnboarding")
-    private var hasCompletedOnboarding = false
+    // Toast
+    @State private var toastManager = ToastManager()
+
+    var onGetStarted: () -> Void = {}
     
     // AlbumRows container
     private var albumRows: [[String]] {
@@ -83,7 +84,7 @@ struct SplashScreen: View {
                         
                         // Button Get Started
                         Button {
-                            hasCompletedOnboarding = true
+                            onGetStarted()
                         } label: {
                             Text("Get started")
                                 .font(.headline)
@@ -97,7 +98,7 @@ struct SplashScreen: View {
                         
                         // Button Log In
                         Button {
-                            
+                            toastManager.show("Log In")
                         } label: {
                             Text("Log in")
                                 .font(.headline)
@@ -114,6 +115,7 @@ struct SplashScreen: View {
                 .padding(.horizontal, 24)
             }
         }
+        .toastOverlay(toastManager)
     }
 }
 

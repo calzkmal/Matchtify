@@ -9,6 +9,17 @@ import SwiftUI
 import AVFoundation
 
 struct MatchSong: View {
+    // Accessibility section
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+    
+    private var useAccessibilityLayout: Bool {
+        dynamicTypeSize.isAccessibilitySize
+    }
+    
+    private var albumSize: CGFloat {
+        dynamicTypeSize.isAccessibilitySize ? 220 : 280
+    }
+    
     let song: Song
 
     @Binding var currentStep: Int
@@ -64,7 +75,7 @@ struct MatchSong: View {
                     HStack {
                         Text("Step \(currentStep) of \(totalSteps)")
                             .font(.callout)
-                            .foregroundStyle(Color.primary)
+                            .foregroundStyle(Color.secondary)
                         
                         Spacer()
                         
@@ -73,8 +84,7 @@ struct MatchSong: View {
                         } label: {
                             Text("Skip")
                                 .font(.callout)
-                                .fontWeight(.semibold)
-                                .foregroundStyle(Color(uiColor: .secondaryLabel))
+                                .foregroundStyle(Color.secondary)
                         }
                     }
                 }
@@ -96,7 +106,7 @@ struct MatchSong: View {
                             Image(song.albumImage)
                                 .resizable()
                                 .scaledToFill()
-                                .frame(width: 280, height: 280)
+                                .frame(width: albumSize, height: albumSize)
                                 .clipShape(RoundedRectangle(cornerRadius: 16))
                                 .overlay {
                                     RoundedRectangle(cornerRadius: 16)
@@ -154,7 +164,7 @@ struct MatchSong: View {
                         .frame(width: 280)
                     }
                     
-                    VStack (spacing: 12) {
+                    VStack (spacing: 8) {
                         // Text
                         Text(song.title)
                             .font(.title2)
@@ -162,25 +172,29 @@ struct MatchSong: View {
                         
                         // Song Label
                         HStack {
-                            Text(song.artist)
-                                .font(.callout)
-                            
-                            Text("·")
-                                .font(.callout)
-                            
-                            Text("Soundtrack")
-                                .font(.callout)
-                            
-                            Text("·")
-                                .font(.callout)
-                            
-                            Text(String(song.year))
-                                .font(.callout)
+                            if useAccessibilityLayout {
+                                VStack (spacing: 4) {
+                                    Text(song.artist)
+                                    Text(String(song.year))
+                                }
+                                .font(.subheadline)
+                                .foregroundStyle(Color.secondary)
+                            } else {
+                                HStack {
+                                    Text(song.artist)
+                                    Text("·")
+                                    Text("Soundtrack")
+                                    Text("·")
+                                    Text(String(song.year))
+                                }
+                                .font(.subheadline)
+                                .foregroundStyle(Color.secondary)
+                            }
                         }
                         
                         Text(song.genre)
-                            .font(.caption)
-                            .foregroundStyle(.primary)
+                            .font(.footnote)
+                            .foregroundStyle(Color.secondary)
                             .padding(.horizontal, 8)
                             .padding(.vertical, 4)
                             .background(.quaternary, in: Capsule())
@@ -220,6 +234,7 @@ struct MatchSong: View {
                     .clipShape(Circle())
                 }
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         }
     }
 }
