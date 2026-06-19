@@ -5,6 +5,7 @@
 
 import AVFoundation
 import Combine
+import SwiftUI
 
 @MainActor
 final class AudioManager: ObservableObject {
@@ -13,7 +14,36 @@ final class AudioManager: ObservableObject {
     @Published var currentTime: TimeInterval = 0
     @Published var duration: TimeInterval = 0
     
-    private let song: Song
+    // Scrub
+    @Published var isScrubbing = false
+    @Published var scrubProgress: Double = 0
+    
+    var sliderProgress: Double {
+        Double(isScrubbing ? scrubProgress : progress)
+    }
+    
+    var progressBinding: Binding<Double> {
+        Binding(
+            get: {
+                self.sliderProgress
+            },
+            set: {
+                self.scrubProgress = $0
+            }
+        )
+    }
+    
+    func handleScrubbing(_ editing: Bool) {
+        if editing {
+            isScrubbing = true
+            scrubProgress = progress
+        } else {
+            seek(to: scrubProgress)
+            isScrubbing = false
+        }
+    }
+    
+    let song: Song
 
     private let engine = AVAudioEngine()
     private let playerNode = AVAudioPlayerNode()

@@ -8,6 +8,9 @@
 import SwiftUI
 
 struct ContentView: View {
+    @StateObject private var audioManager =
+        AudioManager(song: SongLibrary.songs[0])
+    
     private let songs = SongLibrary.songs
     private let totalSteps = 4
 
@@ -37,7 +40,7 @@ struct ContentView: View {
                 }
             case .match:
                 if let currentSong = currentSong {
-                    MatchSong(
+                    OnboardingView(
                         song: currentSong,
                         currentStep: Binding(
                             get: { currentStep },
@@ -64,6 +67,7 @@ struct ContentView: View {
                 MatchView()
             }
         }
+        .environmentObject(audioManager)
     }
 
     private var currentSong: Song? {

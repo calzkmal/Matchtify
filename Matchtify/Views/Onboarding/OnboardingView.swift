@@ -8,7 +8,9 @@
 import SwiftUI
 import AVFoundation
 
-struct MatchSong: View {
+struct OnboardingView: View {
+    @EnvironmentObject var audioManager: AudioManager
+    
     // Accessibility section
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     
@@ -26,27 +28,7 @@ struct MatchSong: View {
     var onNext: () -> Void = {}
     var onSkip: () -> Void = {}
 
-    @StateObject private var audioManager: AudioManager
-    @State private var scrubProgress: Double = 0
-    @State private var isScrubbing = false
-
     let totalSteps: Int = 4
-    
-    init(
-        song: Song,
-        currentStep: Binding<Int>,
-        onNext: @escaping () -> Void = {},
-        onSkip: @escaping () -> Void = {}
-    ) {
-        self.song = song
-        self._currentStep = currentStep
-        self.onNext = onNext
-        self.onSkip = onSkip
-
-        _audioManager = StateObject(
-            wrappedValue: AudioManager(song: song)
-        )
-    }
     
     var body: some View {
         ZStack {
@@ -128,26 +110,9 @@ struct MatchSong: View {
                         // Slider Player
                         VStack(spacing: 4) {
                             Slider(
-                                value: Binding(
-                                    get: {
-                                        isScrubbing
-                                        ? scrubProgress
-                                        : audioManager.progress
-                                    },
-                                    set: { newValue in
-                                        scrubProgress = newValue
-                                    }
-                                ),
+                                value: audioManager.progressBinding,
                                 in: 0...1,
-                                onEditingChanged: { editing in
-                                    if editing {
-                                        isScrubbing = true
-                                        scrubProgress = audioManager.progress
-                                    } else {
-                                        audioManager.seek(to: scrubProgress)
-                                        isScrubbing = false
-                                    }
-                                }
+                                onEditingChanged: audioManager.handleScrubbing
                             )
                             .tint(.indigo)
                             .disabled(audioManager.duration == 0)
@@ -242,6 +207,6 @@ struct MatchSong: View {
 
 #Preview {
     if let song = SongLibrary.songs.first {
-        MatchSong(song: song, currentStep: .constant(1))
+        OnboardingView(song: song, currentStep: .constant(1))
         }
 }
