@@ -17,7 +17,7 @@ struct MatchSong: View {
     }
     
     private var albumSize: CGFloat {
-        dynamicTypeSize.isAccessibilitySize ? 220 : 280
+        dynamicTypeSize.isAccessibilitySize ? 280 : 340
     }
     
     let song: Song
@@ -118,7 +118,9 @@ struct MatchSong: View {
                                     .foregroundStyle(Color.primary)
                                     .frame(width: 80, height: 80)
                             }
-                            .glassEffect(.regular)
+                            .buttonStyle(.glassProminent)
+                            .tint(Color.secondary.opacity(0.5))
+                            .clipShape(Circle())
                         }
                         
                         // Slider Player
@@ -157,7 +159,7 @@ struct MatchSong: View {
                             .font(.caption)
                             .foregroundStyle(.secondary)
                         }
-                        .frame(width: 280)
+                        .padding(.horizontal, 24)
                     }
                     
                     VStack (spacing: 8) {
@@ -209,7 +211,7 @@ struct MatchSong: View {
                         Image(systemName: "xmark")
                             .font(.system(.title, weight: .medium))
                             .foregroundStyle(Color.primary)
-                            .frame(width: 80, height: 80)
+                            .frame(width: 64, height: 64)
                     }
                     // STYLE NYA GINI
                     .buttonStyle(.glassProminent)
@@ -224,7 +226,7 @@ struct MatchSong: View {
                         Image(systemName: "checkmark")
                             .font(.system(.title, weight: .medium))
                             .foregroundStyle(Color.white)
-                            .frame(width: 80, height: 80)
+                            .frame(width: 64, height: 64)
                     }
                     .buttonStyle(.glassProminent)
                     .tint(Color.indigo)

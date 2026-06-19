@@ -106,7 +106,7 @@ struct MatchView: View {
                         Image(song.albumImage)
                             .resizable()
                             .scaledToFill()
-                            .frame(width: 300, height: 300)
+                            .frame(width: 354, height: 456)
                             .clipShape(RoundedRectangle(cornerRadius: 16))
                             .overlay {
                                 RoundedRectangle(cornerRadius: 16)
@@ -118,10 +118,12 @@ struct MatchView: View {
                         } label: {
                             Image(systemName: isCurrentSongLoaded && audioManager.isPlaying ? "pause.fill" : "play.fill")
                                 .font(.largeTitle)
-                                .foregroundStyle(.indigo)
+                                .foregroundStyle(Color.primary)
                                 .frame(width: 80, height: 80)
                         }
-                        .glassEffect(.regular)
+                        .buttonStyle(.glassProminent)
+                        .tint(Color.secondary.opacity(0.5))
+                        .clipShape(Circle())
                     }
                 }
                 else {
