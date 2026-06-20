@@ -18,10 +18,11 @@ struct MatchView: View {
     @EnvironmentObject var audioManager: AudioManager
     
     // Setup Genre List
-    @State private var selectedGenre =
-        Array(Set(SongLibrary.songs.map(\.genre))).sorted().first ?? ""
-    
-    private let genres = Array(
+    @State private var selectedGenre = "All"
+
+    private let genres =
+        ["All"] +
+        Array(
             Set(SongLibrary.songs.map(\.genre))
         ).sorted()
     
@@ -51,12 +52,19 @@ struct MatchView: View {
                         ForEach(genres, id: \.self) { genre in
                             Button {
                                 selectedGenre = genre
-
-                                swipeModel.replaceCards(
-                                    with: SongLibrary.songs.filter {
-                                        $0.genre == genre
-                                    }
-                                )
+                                
+                                if genre == "All" {
+                                    swipeModel.replaceCards(
+                                        with: SongLibrary.songs
+                                    )
+                                } else {
+                                    swipeModel.replaceCards(
+                                                with: SongLibrary.songs.filter {
+                                                    $0.genre == genre
+                                                }
+                                            )
+                                }
+                                
                             } label: {
                                 Text(genre)
                                     .font(.footnote)
