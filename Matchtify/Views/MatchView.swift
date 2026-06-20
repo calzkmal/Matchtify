@@ -78,11 +78,15 @@ struct MatchView: View {
                                         ? .white
                                         : .secondary
                                     )
+                                    .fontWeight(
+                                        selectedGenre == genre
+                                        ? .bold
+                                        : .regular
+                                    )
                                     .clipShape(Capsule())
                             }
                         }
                     }
-                    .padding(.horizontal, 24)
                 }
                 
                 // MARK: Card Area

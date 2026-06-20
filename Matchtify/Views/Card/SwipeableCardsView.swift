@@ -12,15 +12,15 @@ struct SwipeableCardsView: View {
     typealias Model = SwipeableCardsModel
     typealias CardModel = SwipeableCardModel
 
+    private let swipeThreshold: CGFloat = 100
+    private let rotationFactor: Double = 35
+    private let stackedCardOffset: CGFloat = 10
 
     @ObservedObject
     var model: SwipeableCardsModel
 
     @ObservedObject
     var audioManager: AudioManager
-
-    private let swipeThreshold: CGFloat = 100
-    private let rotationFactor: Double = 35
 
     var action: (SwipeableCardsModel) -> Void
     var onCardSwiped: (() -> Void)? = nil
@@ -68,16 +68,8 @@ extension SwipeableCardsView {
                 let isTop =
                     card == model.unswipedCards.first
 
-                let isSecond =
-                    card == model.unswipedCards
-                        .dropFirst()
-                        .first
-
-                let revealProgress = min(
-                    abs(model.dragState.width)
-                    / swipeThreshold,
-                    1
-                )
+                let isSecond = card == model.unswipedCards.dropFirst().first
+                let revealProgress = min(abs(model.dragState.width) / swipeThreshold, 1)
 
                 CardView(
                     song: card.song
@@ -93,68 +85,49 @@ extension SwipeableCardsView {
                     isTop ? 1 : revealProgress
                 )
                 .offset(
-                    x: isTop
-                    ? model.dragState.width
-                    : 0,
-                    y: isTop
-                    ? 0
-                    : isSecond ? 10 : 20
+                    x: isTop ? model.dragState.width: 0,
+                    y: isTop ? 0 : isSecond ? stackedCardOffset : stackedCardOffset * 2
                 )
                 .rotationEffect(
                     .degrees(
-                        isTop
-                        ? Double(
+                        isTop ? Double(
                             model.dragState.width
-                        ) / rotationFactor
-                        : 0
+                        ) / rotationFactor : 0
                     )
                 )
                 .gesture(
-                    isTop
-                    ? dragGesture
-                    : nil
+                    isTop ? dragGesture : nil
                 )
             }
         }
-        // TODO: BENERIN INI COKKKK
-        .frame(maxWidth: .infinity)
+        .frame(maxWidth: .infinity, alignment: .center)
     }
 }
 
 extension SwipeableCardsView {
-
     var dragGesture: some Gesture {
-
         DragGesture()
-
             .onChanged { gesture in
-
                 model.dragState =
                     gesture.translation
             }
 
             .onEnded { _ in
-
                 if abs(
                     model.dragState.width
                 ) > swipeThreshold {
 
                     model.swipe(
-                        model.dragState.width > 0
-                        ? .right
-                        : .left,
+                        model.dragState.width > 0 ? .right : .left,
                         completion: onCardSwiped
                     )
-
                 } else {
-
                     withAnimation(
                         .spring(
                             response: 0.4,
                             dampingFraction: 0.8
                         )
                     ) {
-
                         model.dragState = .zero
                     }
                 }
@@ -163,7 +136,6 @@ extension SwipeableCardsView {
 }
 
 extension SwipeableCardsView {
-
     func loadCurrentSong() {
 
         guard let song =

@@ -20,7 +20,7 @@ struct CardView: View {
                 Image(song.albumImage)
                     .resizable()
                     .scaledToFill()
-                    .aspectRatio(1, contentMode: .fill)
+                    .aspectRatio(1, contentMode: .fit)
                     .clipped()
                     .clipShape(
                         RoundedRectangle(cornerRadius: 16)
@@ -90,7 +90,6 @@ struct CardView: View {
             }
         }
         .padding(24)
-        .frame(maxWidth: .infinity)
         .background(
             RoundedRectangle(cornerRadius: 20)
                 .fill(.background)
