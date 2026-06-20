@@ -8,38 +8,27 @@
 import SwiftUI
 
 struct CardView: View {
-
-    let song: Song
-
     @EnvironmentObject var audioManager: AudioManager
 
-    private let albumSize: CGFloat = 280
+    let song: Song
 
     var body: some View {
 
         VStack(spacing: 24) {
 
             ZStack {
-
                 Image(song.albumImage)
                     .resizable()
                     .scaledToFill()
-                    .frame(
-                        width: albumSize,
-                        height: albumSize
-                    )
+                    .aspectRatio(1, contentMode: .fill)
+                    .clipped()
                     .clipShape(
-                        RoundedRectangle(
-                            cornerRadius: 16
-                        )
+                        RoundedRectangle(cornerRadius: 16)
                     )
 
                 Button {
-
                     audioManager.togglePlayback()
-
                 } label: {
-
                     Image(
                         systemName:
                             audioManager.isPlaying
@@ -47,11 +36,8 @@ struct CardView: View {
                             : "play.fill"
                     )
                     .font(.largeTitle)
-                    .foregroundStyle(.primary)
-                    .frame(
-                        width: 80,
-                        height: 80
-                    )
+                    .foregroundStyle(Color.primary)
+                    .frame(width: 80,height: 80)
                 }
                 .buttonStyle(.glassProminent)
                 .tint(
@@ -61,19 +47,16 @@ struct CardView: View {
             }
 
             VStack(spacing: 4) {
-
                 Text(song.title)
                     .font(.title2.bold())
                     .multilineTextAlignment(.center)
                     .lineLimit(2)
-                    .frame(width: albumSize)
 
                 Text(song.artist)
                     .foregroundStyle(.secondary)
             }
 
             VStack(spacing: 4) {
-
                 Slider(
                     value: audioManager.progressBinding,
                     in: 0...1,
@@ -86,13 +69,10 @@ struct CardView: View {
                 )
 
                 HStack {
-
                     Text(
                         audioManager.elapsedText
                     )
-
                     Spacer()
-
                     Text(
                         audioManager.remainingText
                     )
@@ -100,14 +80,13 @@ struct CardView: View {
                 .font(.caption)
                 .foregroundStyle(.secondary)
             }
-            .frame(width: albumSize)
         }
-        .padding()
-        .background(.background)
-        .clipShape(
-            RoundedRectangle(
-                cornerRadius: 20
-            )
+        .padding(24)
+        .frame(maxWidth: .infinity)
+        .aspectRatio(0.82, contentMode: .fit)
+        .background(
+            RoundedRectangle(cornerRadius: 20)
+                .fill(.background)
         )
         .overlay {
 
@@ -125,4 +104,11 @@ struct CardView: View {
             y: 4
         )
     }
+}
+
+#Preview {
+    CardView(
+        song: SongLibrary.songs[0]
+    )
+    .environmentObject(AudioManager.preview)
 }

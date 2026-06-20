@@ -78,14 +78,11 @@ struct OnboardingView: View {
                 ) { model in
                     model.reset()
                 } onCardSwiped: {
-
                     currentStep += 1
-
                     if currentStep <= totalSteps {
                         onNext()
                     }
                 }
-                .frame(height: 450)
                 .padding(.horizontal, 24)
 
                 // MARK: Action Buttons
