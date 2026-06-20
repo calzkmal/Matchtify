@@ -10,51 +10,97 @@ import SwiftUI
 struct CardView: View {
 
     let song: Song
-    let isPlaying: Bool
-    let onPlayTapped: () -> Void
 
-    let albumSize: CGFloat = 280
-    
+    @EnvironmentObject var audioManager: AudioManager
+
+    private let albumSize: CGFloat = 280
+
     var body: some View {
 
         VStack(spacing: 24) {
 
             ZStack {
+
                 Image(song.albumImage)
                     .resizable()
                     .scaledToFill()
                     .frame(
-                        width: 280,
-                        height: 280
+                        width: albumSize,
+                        height: albumSize
                     )
                     .clipShape(
                         RoundedRectangle(
                             cornerRadius: 16
                         )
                     )
+
                 Button {
-                    onPlayTapped()
+
+                    audioManager.togglePlayback()
+
                 } label: {
-                    Image(systemName: isPlaying ? "pause.fill" : "play.fill")
+
+                    Image(
+                        systemName:
+                            audioManager.isPlaying
+                            ? "pause.fill"
+                            : "play.fill"
+                    )
                     .font(.largeTitle)
-                    .foregroundStyle(Color.primary)
-                    .frame(width: 80, height: 80)
+                    .foregroundStyle(.primary)
+                    .frame(
+                        width: 80,
+                        height: 80
+                    )
                 }
                 .buttonStyle(.glassProminent)
-                .tint(Color.secondary.opacity(0.5))
+                .tint(
+                    Color.secondary.opacity(0.5)
+                )
                 .clipShape(Circle())
             }
-            
-            VStack (spacing: 4) {
+
+            VStack(spacing: 4) {
+
                 Text(song.title)
                     .font(.title2.bold())
                     .multilineTextAlignment(.center)
                     .lineLimit(2)
-                    .frame(width: 280)
+                    .frame(width: albumSize)
 
                 Text(song.artist)
                     .foregroundStyle(.secondary)
             }
+
+            VStack(spacing: 4) {
+
+                Slider(
+                    value: audioManager.progressBinding,
+                    in: 0...1,
+                    onEditingChanged:
+                        audioManager.handleScrubbing
+                )
+                .tint(.indigo)
+                .disabled(
+                    audioManager.duration == 0
+                )
+
+                HStack {
+
+                    Text(
+                        audioManager.elapsedText
+                    )
+
+                    Spacer()
+
+                    Text(
+                        audioManager.remainingText
+                    )
+                }
+                .font(.caption)
+                .foregroundStyle(.secondary)
+            }
+            .frame(width: albumSize)
         }
         .padding()
         .background(.background)
@@ -64,11 +110,14 @@ struct CardView: View {
             )
         )
         .overlay {
-            RoundedRectangle(cornerRadius: 20)
-                .stroke(
-                    .primary.opacity(0.2),
-                    lineWidth: 1
-                )
+
+            RoundedRectangle(
+                cornerRadius: 20
+            )
+            .stroke(
+                .primary.opacity(0.2),
+                lineWidth: 1
+            )
         }
         .shadow(
             color: .black.opacity(0.08),

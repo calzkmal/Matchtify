@@ -95,27 +95,6 @@ struct MatchView: View {
                         model.reset()
                     }
                     .frame(height: 450)
-                    
-                    // Slider Player
-                    VStack(spacing: 4) {
-                        Slider(
-                            value: audioManager.progressBinding,
-                            in: 0...1,
-                            onEditingChanged: audioManager.handleScrubbing
-                        )
-                        .tint(.indigo)
-                        .disabled(audioManager.duration == 0)
-                        
-                        // Audio Time
-                        HStack {
-                            Text(audioManager.elapsedText)
-                            Spacer()
-                            Text(audioManager.remainingText)
-                        }
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                    }
-                    .frame(width: 280)
                 }
             }
             .padding(.horizontal, 24)

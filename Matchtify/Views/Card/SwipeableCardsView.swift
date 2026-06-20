@@ -187,12 +187,9 @@ struct SwipeableCardsView: View {
                         )
 
                         CardView(
-                            song: card.song,
-                            isPlaying: audioManager.isPlaying,
-                            onPlayTapped: {
-                                audioManager.togglePlayback()
-                            }
+                            song: card.song
                         )
+                        .environmentObject(audioManager)
                         .scaleEffect(
                             isTop ? 1 :
                             isSecond ? 0.95 : 0.9
