@@ -25,6 +25,8 @@ struct SwipeableCardsView: View {
     var action: (SwipeableCardsModel) -> Void
     var onCardSwiped: (() -> Void)? = nil
 
+    var allowsSwipeUp: Bool = true
+    
     var body: some View {
         Group {
 
@@ -62,6 +64,7 @@ extension SwipeableCardsView {
                     card == model.unswipedCards.first
 
                 let isSecond = card == model.unswipedCards.dropFirst().first
+                
                 // MARK: Animation for card swiping
                 let revealProgress = min(
                     max(
@@ -117,23 +120,15 @@ extension SwipeableCardsView {
             }
 
             .onEnded { _ in
-
-                if model.dragState.height < -swipeThreshold {
-
-                    model.swipe(
-                        .up,
-                        completion: onCardSwiped
-                    )
-
-                } else if abs(model.dragState.width) > swipeThreshold {
+                if abs(
+                    model.dragState.width
+                ) > swipeThreshold {
 
                     model.swipe(
                         model.dragState.width > 0 ? .right : .left,
                         completion: onCardSwiped
                     )
-
                 } else {
-
                     withAnimation(
                         .spring(
                             response: 0.4,

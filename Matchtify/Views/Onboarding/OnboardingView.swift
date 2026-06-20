@@ -72,15 +72,19 @@ struct OnboardingView: View {
                 // MARK: Card Stack
                 SwipeableCardsView(
                     model: swipeModel,
-                    audioManager: audioManager
-                ) { model in
-                    model.reset()
-                } onCardSwiped: {
-                    currentStep += 1
-                    if currentStep <= totalSteps {
-                        onNext()
-                    }
-                }
+                    audioManager: audioManager,
+                    action: { model in
+                        model.reset()
+                    },
+                    onCardSwiped: {
+                        currentStep += 1
+
+                        if currentStep <= totalSteps {
+                            onNext()
+                        }
+                    },
+                    allowsSwipeUp: false
+                )
 
                 // MARK: Action Buttons
                 HStack(spacing: 16) {

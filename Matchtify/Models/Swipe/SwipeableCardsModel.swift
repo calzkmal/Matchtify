@@ -21,6 +21,8 @@ final class SwipeableCardsModel: ObservableObject {
 
     private let dismissDistance: CGFloat = 1000
 
+    var allowsSwipeUp = true
+    
     init(cards: [SwipeableCardModel]) {
 
         var cards = cards
