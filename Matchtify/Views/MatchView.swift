@@ -8,6 +8,13 @@
 import SwiftUI
 
 struct MatchView: View {
+    @StateObject
+    private var swipeModel = SwipeableCardsView.Model(
+        cards: SongLibrary.songs.map {
+            SwipeableCardsView.CardModel(song: $0)
+        }
+    )
+    
     @EnvironmentObject var audioManager: AudioManager
     
     // Setup Genre List
@@ -18,23 +25,12 @@ struct MatchView: View {
             Set(SongLibrary.songs.map(\.genre))
         ).sorted()
     
-    // Song selector
-    
-    private var filteredSongs: [Song] {
-        SongLibrary.songs.filter {
-            $0.genre == selectedGenre
-        }
-    }
-    
-    // Size for album
-    private let albumSize: CGFloat = 280
-    
     var body: some View {
         ZStack {
             Color(uiColor: .secondarySystemBackground)
                 .ignoresSafeArea()
 
-            // Header Area
+            // MARK: Header Area
             VStack(spacing: 24) {
                 HStack {
                     Text("Match")
@@ -55,11 +51,12 @@ struct MatchView: View {
                         ForEach(genres, id: \.self) { genre in
                             Button {
                                 selectedGenre = genre
-                                if let randomSong = SongLibrary.songs
-                                    .filter ({ $0.genre == genre })
-                                    .randomElement() {
-                                    audioManager.loadSong(randomSong)
-                                }
+
+                                swipeModel.replaceCards(
+                                    with: SongLibrary.songs.filter {
+                                        $0.genre == genre
+                                    }
+                                )
                             } label: {
                                 Text(genre)
                                     .font(.footnote)
@@ -83,28 +80,13 @@ struct MatchView: View {
                 
                 // MARK: Card Area
                 VStack {
-                    ZStack {
-                        Image(audioManager.currentSong.albumImage)
-                            .resizable()
-                            .scaledToFill()
-                            .frame(width: albumSize, height: albumSize)
-                            .clipShape(RoundedRectangle(cornerRadius: 16))
-                            .overlay {
-                                RoundedRectangle(cornerRadius: 16)
-                                    .strokeBorder(.primary.opacity(0.3))
-                            }
-                        
-                        // Play Audio
-                        Button {
-                            audioManager.togglePlayback()
-                        } label: {
-                            Image(systemName: audioManager.isPlaying ? "pause.fill" : "play.fill")
-                                .font(.largeTitle)
-                                .foregroundStyle(Color.primary)
-                                .frame(width: 80, height: 80)
-                        }
-                        .glassEffect(.regular)
+                    SwipeableCardsView(
+                        model: swipeModel,
+                        audioManager: audioManager
+                    ) { model in
+                        model.reset()
                     }
+                    .frame(height: 450)
                     
                     // Slider Player
                     VStack(spacing: 4) {
@@ -129,9 +111,6 @@ struct MatchView: View {
                 }
             }
             .padding(.horizontal, 24)
-        }
-        .onAppear {
-            audioManager.loadRandomSong(for: selectedGenre)
         }
     }
 }

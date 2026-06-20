@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Song: Identifiable {
+struct Song: Identifiable, Equatable {
     var id: String {
         audioFile
     }
