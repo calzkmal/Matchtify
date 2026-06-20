@@ -33,13 +33,6 @@ struct SwipeableCardsView: View {
 
                 EmptyCardsView()
 
-            } else if model.unswipedCards.isEmpty {
-
-                SwipeCompletionView(
-                    model: model,
-                    action: action
-                )
-
             } else {
 
                 cardsStack
@@ -69,7 +62,14 @@ extension SwipeableCardsView {
                     card == model.unswipedCards.first
 
                 let isSecond = card == model.unswipedCards.dropFirst().first
-                let revealProgress = min(abs(model.dragState.width) / swipeThreshold, 1)
+                // MARK: Animation for card swiping
+                let revealProgress = min(
+                    max(
+                        abs(model.dragState.width),
+                        abs(model.dragState.height)
+                    ) / swipeThreshold,
+                    1
+                )
 
                 CardView(
                     song: card.song
@@ -85,14 +85,18 @@ extension SwipeableCardsView {
                     isTop ? 1 : revealProgress
                 )
                 .offset(
-                    x: isTop ? model.dragState.width: 0,
-                    y: isTop ? 0 : isSecond ? stackedCardOffset : stackedCardOffset * 2
+                    x: isTop ? model.dragState.width : 0,
+                    y: isTop
+                        ? model.dragState.height
+                        : isSecond
+                            ? stackedCardOffset
+                            : stackedCardOffset * 2
                 )
                 .rotationEffect(
                     .degrees(
-                        isTop ? Double(
-                            model.dragState.width
-                        ) / rotationFactor : 0
+                        isTop
+                        ? Double(model.dragState.width) / rotationFactor
+                        : 0
                     )
                 )
                 .gesture(
@@ -113,15 +117,23 @@ extension SwipeableCardsView {
             }
 
             .onEnded { _ in
-                if abs(
-                    model.dragState.width
-                ) > swipeThreshold {
+
+                if model.dragState.height < -swipeThreshold {
+
+                    model.swipe(
+                        .up,
+                        completion: onCardSwiped
+                    )
+
+                } else if abs(model.dragState.width) > swipeThreshold {
 
                     model.swipe(
                         model.dragState.width > 0 ? .right : .left,
                         completion: onCardSwiped
                     )
+
                 } else {
+
                     withAnimation(
                         .spring(
                             response: 0.4,

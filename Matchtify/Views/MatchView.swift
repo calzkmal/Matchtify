@@ -15,11 +15,20 @@ struct MatchView: View {
         }
     )
     
+    // AudioManager setup
     @EnvironmentObject var audioManager: AudioManager
+    var onNext: () -> Void = {}
+    
+    // Button state
+    enum SelectedAction {
+        case dislike
+        case favorite
+        case like
+    }
+    @State private var selectedAction: SelectedAction?
     
     // Setup Genre List
     @State private var selectedGenre = "All"
-
     private let genres =
         ["All"] +
         Array(
@@ -97,10 +106,79 @@ struct MatchView: View {
                     model.reset()
                 }
                 
-                Button {
+                // MARK: Three Buttons
+                HStack {
+                    // Dislike
+                    Button {
+                        selectedAction = .dislike
+
+                        swipeModel.swipeLeft {
+                            selectedAction = nil
+                            onNext()
+                        }
+                    } label: {
+                        Image(systemName: "hand.thumbsdown")
+                            .font(.system(.title, weight: .medium))
+                            .foregroundStyle(selectedAction == .dislike
+                                ? Color.white
+                                : Color.primary
+                            )
+                            .frame(width: 64, height: 64)
+                    }
+                    .buttonStyle(.glassProminent)
+                    .tint(selectedAction == .dislike
+                          ? .indigo
+                          : Color.secondary.opacity(0.5)
+                    )
+                    .clipShape(Circle())
                     
-                } label: {
-                    Text("Haha")
+                    // Add to favorite
+                    Button {
+                        selectedAction = .favorite
+
+                        swipeModel.swipeUp() {
+                            selectedAction = nil
+                            onNext()
+                        }
+                    } label: {
+                        Image(systemName: "heart")
+                            .font(.system(.title, weight: .medium))
+                            .foregroundStyle(selectedAction == .favorite
+                                ? Color.white
+                                : Color.primary
+                            )
+                            .frame(width: 64, height: 64)
+                    }
+                    .buttonStyle(.glassProminent)
+                    .tint(selectedAction == .favorite
+                          ? .indigo
+                          : Color.secondary.opacity(0.5)
+                    )
+                    .clipShape(Circle())
+                    
+                    // Like
+                    Button {
+                        selectedAction = .like
+
+                        swipeModel.swipeRight() {
+                            selectedAction = nil
+                            onNext()
+                        }
+                    } label: {
+                        Image(systemName: "hand.thumbsup")
+                            .font(.system(.title, weight: .medium))
+                            .foregroundStyle(selectedAction == .like
+                                ? Color.white
+                                : Color.primary
+                            )
+                            .frame(width: 64, height: 64)
+                    }
+                    .buttonStyle(.glassProminent)
+                    .tint(selectedAction == .like
+                          ? .indigo
+                          : Color.secondary.opacity(0.5)
+                    )
+                    .clipShape(Circle())
                 }
             }
             .frame(maxHeight: .infinity, alignment: .top)

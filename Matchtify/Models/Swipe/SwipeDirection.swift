@@ -8,5 +8,6 @@
 enum SwipeDirection {
     case left
     case right
+    case up
     case none
 }

@@ -23,6 +23,16 @@ final class SwipeableCardsModel: ObservableObject {
 
     init(cards: [SwipeableCardModel]) {
 
+        var cards = cards
+
+        if cards.count == 1,
+           let card = cards.first {
+
+            cards.append(
+                SwipeableCardModel(song: card.song)
+            )
+        }
+
         originalCards = cards
         unswipedCards = cards
         swipedCards = []
@@ -45,41 +55,60 @@ final class SwipeableCardsModel: ObservableObject {
             return
         }
 
-        let card = unswipedCards.removeFirst()
+        var card = unswipedCards.removeFirst()
 
-        swipedCards.append(card)
+        card.swipeDirection = .none
+
+        unswipedCards.append(card)
     }
 
     func swipe(
         _ direction: SwipeDirection,
         completion: (() -> Void)? = nil
     ) {
-
         guard !unswipedCards.isEmpty else {
             return
         }
 
         updateTopCardSwipeDirection(direction)
 
-        withAnimation(
-            .easeOut(duration: 0.4)
-        ) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.08) {
 
-            dragState.width =
-                direction == .right
-                ? dismissDistance
-                : -dismissDistance
-        }
+            withAnimation(.easeOut(duration: 0.4)) {
 
-        DispatchQueue.main.asyncAfter(
-            deadline: .now() + 0.4
-        ) {
+                switch direction {
 
-            self.removeTopCard()
+                case .right:
+                    self.dragState = CGSize(
+                        width: self.dismissDistance,
+                        height: 0
+                    )
 
-            self.dragState = .zero
+                case .left:
+                    self.dragState = CGSize(
+                        width: -self.dismissDistance,
+                        height: 0
+                    )
 
-            completion?()
+                case .up:
+                    self.dragState = CGSize(
+                        width: 0,
+                        height: -self.dismissDistance
+                    )
+
+                case .none:
+                    self.dragState = .zero
+                }
+            }
+
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
+
+                self.removeTopCard()
+
+                self.dragState = .zero
+
+                completion?()
+            }
         }
     }
 
@@ -96,13 +125,21 @@ final class SwipeableCardsModel: ObservableObject {
     func swipeRight(
         completion: (() -> Void)? = nil
     ) {
-
         swipe(
             .right,
             completion: completion
         )
     }
 
+    func swipeUp(
+        completion: (() -> Void)? = nil
+    ) {
+        swipe(
+            .up,
+            completion: completion
+        )
+    }
+    
     func reset() {
 
         unswipedCards = originalCards.map {
@@ -117,23 +154,24 @@ final class SwipeableCardsModel: ObservableObject {
         dragState = .zero
     }
 
-    func replaceCards(
-        with songs: [Song]
-    ) {
+    func replaceCards(with songs: [Song]) {
 
-        let cards = songs.map {
+        var cards = songs.map {
+            SwipeableCardModel(song: $0)
+        }
 
-            SwipeableCardModel(
-                song: $0
+        // Pastikan minimal ada dua card
+        if cards.count == 1,
+           let song = songs.first {
+
+            cards.append(
+                SwipeableCardModel(song: song)
             )
         }
 
         originalCards = cards
-
         unswipedCards = cards
-
         swipedCards.removeAll()
-
         dragState = .zero
     }
 }
