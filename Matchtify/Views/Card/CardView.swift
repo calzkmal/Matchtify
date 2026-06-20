@@ -14,7 +14,7 @@ struct CardView: View {
 
     var body: some View {
 
-        VStack(spacing: 24) {
+        VStack(spacing: 32) {
 
             ZStack {
                 Image(song.albumImage)
@@ -52,8 +52,16 @@ struct CardView: View {
                     .multilineTextAlignment(.center)
                     .lineLimit(2)
 
-                Text(song.artist)
-                    .foregroundStyle(.secondary)
+                HStack {
+                    Text(song.artist)
+                        .foregroundStyle(.secondary)
+                    
+                    Text("·")
+                        .foregroundStyle(.secondary)
+                    
+                    Text(String(song.year))
+                        .foregroundStyle(.secondary)
+                }
             }
 
             VStack(spacing: 4) {
@@ -103,6 +111,7 @@ struct CardView: View {
             radius: 10,
             y: 4
         )
+        .padding(.horizontal, 24)
     }
 }
 

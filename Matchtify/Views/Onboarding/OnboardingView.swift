@@ -18,9 +18,9 @@ struct OnboardingView: View {
     let totalSteps: Int = 4
 
     @StateObject
-    private var swipeModel = SwipeableCardsView.Model(
+    private var swipeModel = SwipeableCardsModel(
         cards: SongLibrary.songs.map {
-            SwipeableCardsView.CardModel(song: $0)
+            SwipeableCardModel(song: $0)
         }
     )
 
@@ -83,7 +83,7 @@ struct OnboardingView: View {
                         onNext()
                     }
                 }
-                .padding(.horizontal, 24)
+                .border(.black)
 
                 // MARK: Action Buttons
                 HStack(spacing: 16) {
