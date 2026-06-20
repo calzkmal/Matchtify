@@ -29,7 +29,7 @@ struct OnboardingView: View {
             Color(uiColor: .secondarySystemBackground)
                 .ignoresSafeArea()
 
-            VStack(spacing: 32) {
+            VStack(spacing: 24) {
 
                 // MARK: Progress Bar
                 VStack(spacing: 8) {
@@ -61,7 +61,6 @@ struct OnboardingView: View {
                         }
                     }
                 }
-                .padding(.horizontal, 24)
 
                 // MARK: Title
                 Text("Does this track match \(Text("your taste?").foregroundStyle(.indigo))")
@@ -69,7 +68,6 @@ struct OnboardingView: View {
                     .fontWeight(.semibold)
                     .fixedSize(horizontal: false, vertical: true)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.horizontal, 24)
 
                 // MARK: Card Stack
                 SwipeableCardsView(
@@ -83,13 +81,11 @@ struct OnboardingView: View {
                         onNext()
                     }
                 }
-                .border(.black)
 
                 // MARK: Action Buttons
                 HStack(spacing: 16) {
                     Button {
                         swipeModel.swipeLeft()
-                        
                         currentStep += 1
                         onNext()
                     } label: {
@@ -118,7 +114,7 @@ struct OnboardingView: View {
                     .clipShape(Circle())
                 }
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+            .padding(.horizontal, 24)
         }
     }
 

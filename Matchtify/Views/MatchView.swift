@@ -82,6 +82,7 @@ struct MatchView: View {
                             }
                         }
                     }
+                    .padding(.horizontal, 24)
                 }
                 
                 // MARK: Card Area
@@ -90,6 +91,12 @@ struct MatchView: View {
                     audioManager: audioManager
                 ) { model in
                     model.reset()
+                }
+                
+                Button {
+                    
+                } label: {
+                    Text("Haha")
                 }
             }
             .padding(.horizontal, 24)

@@ -20,25 +20,18 @@ struct SwipeableCardsView: View {
     var audioManager: AudioManager
 
     private let swipeThreshold: CGFloat = 100
-
     private let rotationFactor: Double = 35
 
     var action: (SwipeableCardsModel) -> Void
-
     var onCardSwiped: (() -> Void)? = nil
 
     var body: some View {
-
-        GeometryReader { geometry in
+        Group {
 
             if model.unswipedCards.isEmpty &&
                 model.swipedCards.isEmpty {
 
                 EmptyCardsView()
-                    .frame(
-                        width: geometry.size.width,
-                        height: geometry.size.height
-                    )
 
             } else if model.unswipedCards.isEmpty {
 
@@ -46,23 +39,16 @@ struct SwipeableCardsView: View {
                     model: model,
                     action: action
                 )
-                .frame(
-                    width: geometry.size.width,
-                    height: geometry.size.height
-                )
 
             } else {
 
                 cardsStack
             }
         }
-        .onAppear(
-            perform: loadCurrentSong
-        )
+        .onAppear(perform: loadCurrentSong)
         .onChange(
             of: model.unswipedCards.first?.id
         ) { _, _ in
-
             loadCurrentSong()
         }
     }
@@ -130,6 +116,8 @@ extension SwipeableCardsView {
                 )
             }
         }
+        // TODO: BENERIN INI COKKKK
+        .frame(maxWidth: .infinity)
     }
 }
 

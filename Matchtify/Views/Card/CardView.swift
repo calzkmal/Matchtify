@@ -91,7 +91,6 @@ struct CardView: View {
         }
         .padding(24)
         .frame(maxWidth: .infinity)
-        .aspectRatio(0.82, contentMode: .fit)
         .background(
             RoundedRectangle(cornerRadius: 20)
                 .fill(.background)
@@ -111,7 +110,6 @@ struct CardView: View {
             radius: 10,
             y: 4
         )
-        .padding(.horizontal, 24)
     }
 }
 
