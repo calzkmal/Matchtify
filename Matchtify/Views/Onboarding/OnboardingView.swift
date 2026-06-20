@@ -91,7 +91,7 @@ struct OnboardingView: View {
                     } label: {
                         Image(systemName: "xmark")
                             .font(.system(.title, weight: .medium))
-                            .foregroundStyle(.primary)
+                            .foregroundStyle(Color.primary)
                             .frame(width: 64, height: 64)
                     }
                     .buttonStyle(.glassProminent)
@@ -100,13 +100,12 @@ struct OnboardingView: View {
 
                     Button {
                         swipeModel.swipeRight()
-                        
                         currentStep += 1
                         onNext()
                     } label: {
                         Image(systemName: "checkmark")
                             .font(.system(.title, weight: .medium))
-                            .foregroundStyle(.white)
+                            .foregroundStyle(Color.white)
                             .frame(width: 64, height: 64)
                     }
                     .buttonStyle(.glassProminent)

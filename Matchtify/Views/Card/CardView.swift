@@ -46,7 +46,7 @@ struct CardView: View {
                 .clipShape(Circle())
             }
 
-            VStack(spacing: 4) {
+            VStack(spacing: 8) {
                 Text(song.title)
                     .font(.title2.bold())
                     .multilineTextAlignment(.center)

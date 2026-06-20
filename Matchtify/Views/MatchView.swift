@@ -103,6 +103,7 @@ struct MatchView: View {
                     Text("Haha")
                 }
             }
+            .frame(maxHeight: .infinity, alignment: .top)
             .padding(.horizontal, 24)
         }
     }
