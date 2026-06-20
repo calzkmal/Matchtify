@@ -52,7 +52,6 @@ struct MatchView: View {
                         ForEach(genres, id: \.self) { genre in
                             Button {
                                 selectedGenre = genre
-                                
                                 if genre == "All" {
                                     swipeModel.replaceCards(
                                         with: SongLibrary.songs
@@ -64,7 +63,6 @@ struct MatchView: View {
                                                 }
                                             )
                                 }
-                                
                             } label: {
                                 Text(genre)
                                     .font(.footnote)
@@ -87,14 +85,11 @@ struct MatchView: View {
                 }
                 
                 // MARK: Card Area
-                VStack {
-                    SwipeableCardsView(
-                        model: swipeModel,
-                        audioManager: audioManager
-                    ) { model in
-                        model.reset()
-                    }
-                    .frame(height: 450)
+                SwipeableCardsView(
+                    model: swipeModel,
+                    audioManager: audioManager
+                ) { model in
+                    model.reset()
                 }
             }
             .padding(.horizontal, 24)

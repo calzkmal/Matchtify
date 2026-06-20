@@ -87,7 +87,6 @@ struct OnboardingView: View {
 
                 // MARK: Action Buttons
                 HStack(spacing: 16) {
-
                     Button {
                         swipeModel.swipeLeft()
                         
@@ -118,8 +117,6 @@ struct OnboardingView: View {
                     .tint(.indigo)
                     .clipShape(Circle())
                 }
-
-                Spacer()
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         }
