@@ -101,21 +101,37 @@ struct MatchView: View {
                 // MARK: Card Area
                 SwipeableCardsView(
                     model: swipeModel,
-                    audioManager: audioManager
-                ) { model in
-                    model.reset()
-                }
+                    audioManager: audioManager,
+                    action: { model in
+                        model.reset()
+                    },
+                    onCardSwiped: {
+                        selectedAction = nil
+                        onNext()
+                    },
+                    onSwipeDirection: { direction in
+
+                        switch direction {
+                        case .left:
+                            selectedAction = .dislike
+
+                        case .right:
+                            selectedAction = .like
+
+                        case .up:
+                            selectedAction = .favorite
+
+                        case .none:
+                            break
+                        }
+                    }
+                )
                 
                 // MARK: Three Buttons
                 HStack {
                     // Dislike
                     Button {
-                        selectedAction = .dislike
-
-                        swipeModel.swipeLeft {
-                            selectedAction = nil
-                            onNext()
-                        }
+                        performSwipe(.dislike)
                     } label: {
                         Image(systemName: "hand.thumbsdown")
                             .font(.system(.title, weight: .medium))
@@ -134,12 +150,7 @@ struct MatchView: View {
                     
                     // Add to favorite
                     Button {
-                        selectedAction = .favorite
-
-                        swipeModel.swipeUp() {
-                            selectedAction = nil
-                            onNext()
-                        }
+                        performSwipe(.favorite)
                     } label: {
                         Image(systemName: "heart")
                             .font(.system(.title, weight: .medium))
@@ -158,12 +169,7 @@ struct MatchView: View {
                     
                     // Like
                     Button {
-                        selectedAction = .like
-
-                        swipeModel.swipeRight() {
-                            selectedAction = nil
-                            onNext()
-                        }
+                        performSwipe(.like)
                     } label: {
                         Image(systemName: "hand.thumbsup")
                             .font(.system(.title, weight: .medium))
@@ -183,6 +189,33 @@ struct MatchView: View {
             }
             .frame(maxHeight: .infinity, alignment: .top)
             .padding(.horizontal, 24)
+        }
+    }
+    
+    func performSwipe(
+        _ action: SelectedAction
+    ) {
+        selectedAction = action
+
+        switch action {
+
+        case .dislike:
+            swipeModel.swipeLeft {
+                selectedAction = nil
+                onNext()
+            }
+
+        case .favorite:
+            swipeModel.swipeUp {
+                selectedAction = nil
+                onNext()
+            }
+
+        case .like:
+            swipeModel.swipeRight {
+                selectedAction = nil
+                onNext()
+            }
         }
     }
 }

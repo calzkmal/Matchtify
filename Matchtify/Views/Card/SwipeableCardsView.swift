@@ -27,6 +27,8 @@ struct SwipeableCardsView: View {
 
     var allowsSwipeUp: Bool = true
     
+    var onSwipeDirection: ((SwipeDirection) -> Void)? = nil
+    
     var body: some View {
         Group {
 
@@ -120,15 +122,30 @@ extension SwipeableCardsView {
             }
 
             .onEnded { _ in
-                if abs(
-                    model.dragState.width
-                ) > swipeThreshold {
+
+                if model.dragState.height < -swipeThreshold {
+
+                    onSwipeDirection?(.up)
 
                     model.swipe(
-                        model.dragState.width > 0 ? .right : .left,
+                        .up,
                         completion: onCardSwiped
                     )
+
+                } else if abs(model.dragState.width) > swipeThreshold {
+
+                    let direction: SwipeDirection =
+                        model.dragState.width > 0 ? .right : .left
+
+                    onSwipeDirection?(direction)
+
+                    model.swipe(
+                        direction,
+                        completion: onCardSwiped
+                    )
+
                 } else {
+
                     withAnimation(
                         .spring(
                             response: 0.4,
