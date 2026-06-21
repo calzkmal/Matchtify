@@ -12,6 +12,9 @@ struct ExploreView: View {
         Dictionary(grouping: SongLibrary.songs) { $0.genre }
     }
     
+    // profile
+    @State private var showProfileSheet = false
+    
     var body: some View {
         ZStack {
             Color(uiColor: .secondarySystemBackground)
@@ -30,11 +33,19 @@ struct ExploreView: View {
                             
                             Spacer()
                             
-                            Image("ProfilePicture")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 40, height: 40)
-                                .clipShape(Circle())
+                            Button {
+                                showProfileSheet = true
+                            } label: {
+                                Image("ProfilePicture")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 40, height: 40)
+                                    .clipShape(Circle())
+                            }
+                            .sheet(isPresented: $showProfileSheet) {
+                                ProfileSheetView()
+                                    .presentationSizing(.page)
+                            }
                         }
                     }
                     // MARK: Container Padding
@@ -102,4 +113,5 @@ struct ExploreView: View {
 
 #Preview {
     ExploreView()
+        .environment(AppState())
 }

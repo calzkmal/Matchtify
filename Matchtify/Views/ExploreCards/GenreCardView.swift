@@ -9,7 +9,16 @@ import SwiftUI
 
 struct GenreCardView: View {
     let song: Song
-
+    let imageSize: CGFloat
+    
+    init(
+        song: Song,
+        imageSize: CGFloat = 200
+    ) {
+        self.song = song
+        self.imageSize = imageSize
+    }
+    
     // Toast
     @State private var
     toastManager = ToastManager()
@@ -23,7 +32,7 @@ struct GenreCardView: View {
                 Image(song.albumImage)
                     .resizable()
                     .scaledToFill()
-                    .frame(width: 200, height: 200)
+                    .frame(width: imageSize, height: imageSize)
                     .clipShape(
                         RoundedRectangle(cornerRadius: 8)
                     )

@@ -13,7 +13,8 @@ struct ToastComponent: View {
 
     var body: some View {
         Text("Tapped: \(message)")
-            .font(.headline)
+            .font(.callout)
+            .fontWeight(.semibold)
             .padding(.horizontal, 16)
             .padding(.vertical, 12)
             .glassEffect()

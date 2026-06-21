@@ -12,6 +12,14 @@ struct LibraryView: View {
         Dictionary(grouping: SongLibrary.songs) { $0.genre }
     }
     
+    private let columns = [
+        GridItem(.flexible(), spacing: 16),
+        GridItem(.flexible(), spacing: 16)
+    ]
+    
+    // Popup profile
+    @State private var showProfileSheet = false
+    
     var body: some View {
         ZStack {
             Color(uiColor: .secondarySystemBackground)
@@ -19,29 +27,66 @@ struct LibraryView: View {
             
             // MARK: Main Container
             ScrollView {
-                VStack (spacing: 32) {
-                    
-                    VStack {
+                
+                VStack(alignment: .leading, spacing: 24) {
+
+                    // MARK: Header Area
+                    HStack {
+                        Text("Match")
+                            .font(.largeTitle.bold())
                         
-                        // MARK: Header Area
-                        HStack {
-                            Text("Library")
-                                .font(.largeTitle.bold())
-                            
-                            Spacer()
-                            
+                        Spacer()
+                        
+                        Button {
+                            showProfileSheet = true
+                        } label: {
                             Image("ProfilePicture")
                                 .resizable()
                                 .scaledToFit()
                                 .frame(width: 40, height: 40)
                                 .clipShape(Circle())
                         }
+                        .sheet(isPresented: $showProfileSheet) {
+                            ProfileSheetView()
+                                .presentationSizing(.page)
+                        }
                     }
-                    // MARK: Container Padding
-                    .padding(.horizontal)
+
+                    // Lists
+                    VStack(spacing: 0) {
+                        LibraryRowComponent(
+                            title: "Liked Songs",
+                            icon: "heart.fill"
+                        )
+
+                        Divider()
+
+                        LibraryRowComponent(
+                            title: "Albums",
+                            icon: "rectangle.stack"
+                        )
+                    }
                     
-                    
+                    // Songs Section
+                    VStack(alignment: .leading, spacing: 16) {
+                        Text("Songs")
+                            .font(.title2.bold())
+
+                        LazyVGrid(
+                            columns: columns,
+                            alignment: .leading,
+                            spacing: 24
+                        ) {
+                            ForEach(SongLibrary.songs) { song in
+                                GenreCardView(
+                                    song: song,
+                                    imageSize: 168
+                                )
+                            }
+                        }
+                    }
                 }
+                .padding()
             }
         }
     }
@@ -49,4 +94,5 @@ struct LibraryView: View {
 
 #Preview {
     LibraryView()
+        .environment(AppState())
 }
