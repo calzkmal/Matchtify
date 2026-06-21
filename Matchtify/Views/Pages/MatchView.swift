@@ -189,7 +189,7 @@ struct MatchView: View {
                 }
             }
             .frame(maxHeight: .infinity, alignment: .top)
-            .padding(.horizontal, 24)
+            .padding(.horizontal)
         }
     }
 }

@@ -19,7 +19,7 @@ struct ExploreView: View {
             
             // MARK: Main Container
             ScrollView {
-                VStack (spacing: 24) {
+                VStack (spacing: 32) {
                     
                     VStack {
                         
@@ -38,7 +38,7 @@ struct ExploreView: View {
                         }
                     }
                     // MARK: Container Padding
-                    .padding(.horizontal, 24)
+                    .padding(.horizontal)
                     
                     // MARK: - Top Pick
                     VStack (spacing: 12) {
@@ -66,7 +66,7 @@ struct ExploreView: View {
                     }
                     
                     // MARK: - Per genres
-                    LazyVStack(spacing: 24) {
+                    LazyVStack(spacing: 48) {
                         ForEach(
                             songsByGenre.keys.sorted(),
                             id: \.self

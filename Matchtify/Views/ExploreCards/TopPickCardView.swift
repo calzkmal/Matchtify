@@ -66,7 +66,7 @@ struct TopPickCardView: View {
         }
         .frame(width: 248, height: 320)
         .clipShape(
-            RoundedRectangle(cornerRadius: 20)
+            RoundedRectangle(cornerRadius: 16)
         )
     }
 }

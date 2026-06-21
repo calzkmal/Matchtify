@@ -29,7 +29,7 @@ struct CardView: View {
                     .clipShape(
                         RoundedRectangle(cornerRadius: 16)
                     )
-                    .padding(.horizontal, 24)
+                    .padding(.horizontal, 28)
                 
                 Button {
                     audioManager.togglePlayback()
@@ -92,7 +92,7 @@ struct CardView: View {
                 .disabled(
                     audioManager.duration == 0
                 )
-                .padding(.horizontal, 24)
+                .padding(.horizontal, 28)
 
                 HStack {
                     Text(
@@ -103,12 +103,12 @@ struct CardView: View {
                         audioManager.remainingText
                     )
                 }
-                .padding(.horizontal, 24)
+                .padding(.horizontal, 28)
                 .font(.caption)
                 .foregroundStyle(.secondary)
             }
         }
-        .padding(.vertical, 24)
+        .padding(.vertical, 20)
         .background(
             RoundedRectangle(cornerRadius: 20)
                 .fill(.background)
