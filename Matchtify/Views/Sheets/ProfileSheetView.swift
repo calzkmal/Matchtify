@@ -9,10 +9,15 @@ import SwiftUI
 
 struct ProfileSheetView: View {
 
-    @Environment(\.dismiss) private var dismiss
+    @Environment(\.dismiss)
+    private var dismiss
+    
+    @Environment(AppState.self)
+    private var appState
     
     // Toast
-    @State private var toastManager = ToastManager()
+    @State private var
+    toastManager = ToastManager()
     
     var body: some View {
         NavigationStack {
@@ -51,7 +56,8 @@ struct ProfileSheetView: View {
 
                 VStack{
                     Button {
-                        toastManager.show("Set up profile")
+                        appState.resetOnboarding()
+                        dismiss()
                     } label: {
                         HStack(spacing: 16) {
                             
@@ -97,4 +103,5 @@ struct ProfileSheetView: View {
 
 #Preview {
     ProfileSheetView()
+        .environment(AppState())
 }

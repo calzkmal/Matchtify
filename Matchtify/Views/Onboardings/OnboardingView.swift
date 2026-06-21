@@ -8,11 +8,14 @@
 import SwiftUI
 
 struct OnboardingView: View {
-    @EnvironmentObject var audioManager: AudioManager
+    @EnvironmentObject var
+    audioManager: AudioManager
 
-    @State private var selectedAction: SwipeAction?
+    @State private var
+    selectedAction: SwipeAction?
     
-    @Binding var currentStep: Int
+    @Binding var
+    currentStep: Int
 
     var onNext: () -> Void = {}
     var onSkip: () -> Void = {}

@@ -15,6 +15,9 @@ struct MatchView: View {
         }
     )
     
+    @Environment(AppState.self)
+    private var appState
+    
     // AudioManager setup
     @EnvironmentObject var audioManager: AudioManager
     var onNext: () -> Void = {}
@@ -192,5 +195,7 @@ struct MatchView: View {
 }
 
 #Preview {
-    MatchView().environmentObject(AudioManager.preview)
+    MatchView()
+        .environmentObject(AudioManager.preview)
+        .environment(AppState())
 }
