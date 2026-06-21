@@ -39,6 +39,7 @@ struct MainTabView: View {
             }
         }
         .searchable(text: $searchText)
+        .tint(.indigo)
     }
 }
 

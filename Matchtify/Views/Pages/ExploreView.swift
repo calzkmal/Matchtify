@@ -9,6 +9,15 @@ import SwiftUI
 
 struct ExploreView: View {
     var body: some View {
-        Text("Hello World")
+        ZStack {
+            Color(uiColor: .secondarySystemBackground)
+                .ignoresSafeArea()
+            
+            Text("Hello World")
+        }
     }
+}
+
+#Preview {
+    ExploreView()
 }

@@ -39,9 +39,11 @@ struct MatchView: View {
         ZStack {
             Color(uiColor: .secondarySystemBackground)
                 .ignoresSafeArea()
-
-            // MARK: Header Area
+            
+            // MARK: Main Container
             VStack(spacing: 24) {
+            
+                // MARK: Header Area
                 HStack {
                     Text("Match")
                         .font(.largeTitle.bold())
@@ -139,7 +141,7 @@ struct MatchView: View {
                                 ? Color.white
                                 : Color.primary
                             )
-                            .frame(width: 64, height: 64)
+                            .frame(width: 56, height: 56)
                     }
                     .buttonStyle(.glassProminent)
                     .tint(selectedAction == .dislike
@@ -177,7 +179,7 @@ struct MatchView: View {
                                 ? Color.white
                                 : Color.primary
                             )
-                            .frame(width: 64, height: 64)
+                            .frame(width: 56, height: 56)
                     }
                     .buttonStyle(.glassProminent)
                     .tint(selectedAction == .like

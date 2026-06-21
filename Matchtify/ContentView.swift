@@ -57,7 +57,7 @@ struct ContentView: View {
                     }
                 )
             case .home:
-                MatchView()
+                MainTabView()
             }
         }
         .environmentObject(audioManager)
