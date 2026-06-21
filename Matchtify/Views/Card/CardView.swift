@@ -14,7 +14,7 @@ struct CardView: View {
 
     var body: some View {
 
-        VStack(spacing: 32) {
+        VStack(spacing: 24) {
 
             ZStack {
                 Image(song.albumImage)
