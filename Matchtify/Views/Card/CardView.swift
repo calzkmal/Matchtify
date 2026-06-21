@@ -19,13 +19,12 @@ struct CardView: View {
             ZStack {
                 Image(song.albumImage)
                     .resizable()
-                    .scaledToFill()
                     .aspectRatio(1, contentMode: .fit)
-                    .clipped()
                     .clipShape(
                         RoundedRectangle(cornerRadius: 16)
                     )
-
+                    .padding(.horizontal, 24)
+                
                 Button {
                     audioManager.togglePlayback()
                 } label: {
@@ -75,6 +74,7 @@ struct CardView: View {
                 .disabled(
                     audioManager.duration == 0
                 )
+                .padding(.horizontal, 24)
 
                 HStack {
                     Text(
@@ -85,17 +85,17 @@ struct CardView: View {
                         audioManager.remainingText
                     )
                 }
+                .padding(.horizontal, 24)
                 .font(.caption)
                 .foregroundStyle(.secondary)
             }
         }
-        .padding(24)
+        .padding(.vertical, 24)
         .background(
             RoundedRectangle(cornerRadius: 20)
                 .fill(.background)
         )
         .overlay {
-
             RoundedRectangle(
                 cornerRadius: 20
             )
@@ -107,7 +107,7 @@ struct CardView: View {
         .shadow(
             color: .black.opacity(0.08),
             radius: 10,
-            y: 4
+            y: 0
         )
     }
 }

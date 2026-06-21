@@ -14,9 +14,7 @@ final class SwipeableCardsModel: ObservableObject {
     private var originalCards: [SwipeableCardModel]
 
     @Published var dragState = CGSize.zero
-
     @Published var unswipedCards: [SwipeableCardModel]
-
     @Published var swipedCards: [SwipeableCardModel]
 
     private let dismissDistance: CGFloat = 1000

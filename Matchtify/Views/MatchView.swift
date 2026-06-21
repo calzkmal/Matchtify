@@ -128,7 +128,7 @@ struct MatchView: View {
                 )
                 
                 // MARK: Three Buttons
-                HStack {
+                HStack (spacing: 24) {
                     // Dislike
                     Button {
                         performSwipe(.dislike)
@@ -153,12 +153,12 @@ struct MatchView: View {
                         performSwipe(.favorite)
                     } label: {
                         Image(systemName: "heart")
-                            .font(.system(.title, weight: .medium))
+                            .font(.system(.title2, weight: .medium))
                             .foregroundStyle(selectedAction == .favorite
                                 ? Color.white
                                 : Color.primary
                             )
-                            .frame(width: 64, height: 64)
+                            .frame(width: 40, height: 40)
                     }
                     .buttonStyle(.glassProminent)
                     .tint(selectedAction == .favorite
