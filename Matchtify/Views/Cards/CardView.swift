@@ -97,7 +97,7 @@ struct CardView: View {
         )
         .overlay {
             RoundedRectangle(
-                cornerRadius: 20
+                cornerRadius: 24
             )
             .stroke(
                 .primary.opacity(0.2),
