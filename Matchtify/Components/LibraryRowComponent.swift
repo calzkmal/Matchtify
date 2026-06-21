@@ -19,17 +19,23 @@ struct LibraryRowComponent: View {
         } label: {
             HStack(spacing: 16) {
                 Image(systemName: icon)
-                    .foregroundStyle(.indigo)
+                    .foregroundStyle(Color.indigo)
                 
                 Text(title)
+                    .foregroundStyle(Color.primary)
                 
                 Spacer()
                 
                 Image(systemName: "chevron.right")
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(Color.secondary)
             }
             .padding(.vertical, 16)
         }
         .toastOverlay(toastManager)
     }
+}
+
+
+#Preview {
+    LibraryRowComponent(title: "Liked", icon: "safari")
 }
