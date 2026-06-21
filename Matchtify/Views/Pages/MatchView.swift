@@ -9,7 +9,7 @@ import SwiftUI
 
 struct MatchView: View {
     @StateObject
-    private var swipeModel = SwipeableCardsView.Model(
+    private var swipeModel = SwipeableCardsViewModel(
         cards: SongLibrary.songs.map {
             SwipeableCardsView.CardModel(song: $0)
         }
@@ -19,13 +19,8 @@ struct MatchView: View {
     @EnvironmentObject var audioManager: AudioManager
     var onNext: () -> Void = {}
     
-    // Button state
-    enum SelectedAction {
-        case dislike
-        case favorite
-        case like
-    }
-    @State private var selectedAction: SelectedAction?
+    // Swipe Button state
+    @State private var selectedAction: SwipeAction?
     
     // Popup profile
     @State private var showProfileSheet = false
@@ -144,7 +139,7 @@ struct MatchView: View {
                 HStack (spacing: 24) {
                     // Dislike
                     Button {
-                        performSwipe(.dislike)
+                        swipeModel.performSwipe(.dislike)
                     } label: {
                         Image(systemName: "hand.thumbsdown")
                             .font(.system(.title, weight: .medium))
@@ -163,7 +158,7 @@ struct MatchView: View {
                     
                     // Add to favorite
                     Button {
-                        performSwipe(.favorite)
+                        swipeModel.performSwipe(.favorite)
                     } label: {
                         Image(systemName: "heart")
                             .font(.system(.title2, weight: .medium))
@@ -182,7 +177,7 @@ struct MatchView: View {
                     
                     // Like
                     Button {
-                        performSwipe(.like)
+                        swipeModel.performSwipe(.like)
                     } label: {
                         Image(systemName: "hand.thumbsup")
                             .font(.system(.title, weight: .medium))
@@ -202,33 +197,6 @@ struct MatchView: View {
             }
             .frame(maxHeight: .infinity, alignment: .top)
             .padding(.horizontal, 24)
-        }
-    }
-    
-    func performSwipe(
-        _ action: SelectedAction
-    ) {
-        selectedAction = action
-
-        switch action {
-
-        case .dislike:
-            swipeModel.swipeLeft {
-                selectedAction = nil
-                onNext()
-            }
-
-        case .favorite:
-            swipeModel.swipeUp {
-                selectedAction = nil
-                onNext()
-            }
-
-        case .like:
-            swipeModel.swipeRight {
-                selectedAction = nil
-                onNext()
-            }
         }
     }
 }

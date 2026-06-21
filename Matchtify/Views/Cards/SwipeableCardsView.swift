@@ -7,9 +7,10 @@
 
 import SwiftUI
 import Combine
+import Foundation
 
 struct SwipeableCardsView: View {
-    typealias Model = SwipeableCardsModel
+    typealias ViewModel = SwipeableCardsViewModel
     typealias CardModel = SwipeableCardModel
 
     private let swipeThreshold: CGFloat = 100
@@ -17,12 +18,12 @@ struct SwipeableCardsView: View {
     private let stackedCardOffset: CGFloat = 10
 
     @ObservedObject
-    var model: SwipeableCardsModel
+    var model: SwipeableCardsViewModel
 
     @ObservedObject
     var audioManager: AudioManager
 
-    var action: (SwipeableCardsModel) -> Void
+    var action: (SwipeableCardsViewModel) -> Void
     var onCardSwiped: (() -> Void)? = nil
 
     var allowsSwipeUp: Bool = true
@@ -134,5 +135,32 @@ extension SwipeableCardsView {
         audioManager.loadSong(
             song
         )
+    }
+}
+
+extension SwipeableCardsViewModel {
+
+    func performSwipe(
+        _ action: SwipeAction,
+        completion: (() -> Void)? = nil
+    ) {
+
+        switch action {
+
+        case .dislike:
+            swipeLeft {
+                completion?()
+            }
+
+        case .like:
+            swipeRight {
+                completion?()
+            }
+
+        case .favorite:
+            swipeUp {
+                completion?()
+            }
+        }
     }
 }

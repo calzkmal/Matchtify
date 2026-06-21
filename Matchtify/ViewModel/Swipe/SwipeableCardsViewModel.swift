@@ -1,5 +1,5 @@
 //
-//  SwipeableCardsModel.swift
+//  SwipeableCardsViewModel.swift
 //  Matchtify
 //
 //  Created by Calzy Akmal Indyramdhani on 20/06/26.
@@ -9,7 +9,7 @@ import SwiftUI
 import Combine
 
 @MainActor
-final class SwipeableCardsModel: ObservableObject {
+final class SwipeableCardsViewModel: ObservableObject {
 
     private var originalCards: [SwipeableCardModel]
 

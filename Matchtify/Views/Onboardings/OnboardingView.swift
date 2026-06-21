@@ -10,6 +10,8 @@ import SwiftUI
 struct OnboardingView: View {
     @EnvironmentObject var audioManager: AudioManager
 
+    @State private var selectedAction: SwipeAction?
+    
     @Binding var currentStep: Int
 
     var onNext: () -> Void = {}
@@ -18,7 +20,7 @@ struct OnboardingView: View {
     let totalSteps: Int = 4
 
     @StateObject
-    private var swipeModel = SwipeableCardsModel(
+    private var swipeModel = SwipeableCardsViewModel(
         cards: SongLibrary.songs.map {
             SwipeableCardModel(song: $0)
         }
@@ -69,7 +71,7 @@ struct OnboardingView: View {
                     .fixedSize(horizontal: false, vertical: true)
                     .frame(maxWidth: .infinity, alignment: .leading)
 
-                // MARK: Card Stack
+                // MARK: Card Area
                 SwipeableCardsView(
                     model: swipeModel,
                     audioManager: audioManager,
@@ -77,19 +79,31 @@ struct OnboardingView: View {
                         model.reset()
                     },
                     onCardSwiped: {
-                        currentStep += 1
-
-                        if currentStep <= totalSteps {
-                            onNext()
-                        }
+                        selectedAction = nil
+                        onNext()
                     },
-                    allowsSwipeUp: false
+                    onSwipeDirection: { direction in
+
+                        switch direction {
+                        case .left:
+                            selectedAction = .dislike
+
+                        case .right:
+                            selectedAction = .like
+
+                        case .up:
+                            break
+                            
+                        case .none:
+                            break
+                        }
+                    }
                 )
 
                 // MARK: Action Buttons
                 HStack(spacing: 16) {
                     Button {
-                        swipeModel.swipeLeft()
+                        swipeModel.performSwipe(.dislike)
                         currentStep += 1
                         onNext()
                     } label: {
@@ -103,7 +117,7 @@ struct OnboardingView: View {
                     .clipShape(Circle())
 
                     Button {
-                        swipeModel.swipeRight()
+                        swipeModel.performSwipe(.like)
                         currentStep += 1
                         onNext()
                     } label: {
