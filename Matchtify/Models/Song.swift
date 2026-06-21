@@ -7,12 +7,15 @@
 
 import Foundation
 
-struct Song: Identifiable {
-    let id = UUID()
+struct Song: Identifiable, Equatable {
+    var id: String {
+        audioFile
+    }
     
     let audioFile: String
     let albumImage: String
     let title: String
     let artist: String
     let genre: String
+    let year: Int
 }

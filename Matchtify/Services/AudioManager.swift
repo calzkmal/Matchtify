@@ -1,19 +1,27 @@
 //
-//  AV.swift
+//  AudioManager.swift
 //  Matchtify
 //
 
 import AVFoundation
+import SwiftUI
 import Combine
 
 @MainActor
 final class AudioManager: ObservableObject {
 
+    // MARK: - Published Properties
+
+    @Published var currentSong: Song
     @Published var isPlaying = false
+
     @Published var currentTime: TimeInterval = 0
     @Published var duration: TimeInterval = 0
-    
-    private let song: Song
+
+    @Published var isScrubbing = false
+    @Published var scrubProgress: Double = 0
+
+    // MARK: - Audio Engine
 
     private let engine = AVAudioEngine()
     private let playerNode = AVAudioPlayerNode()
@@ -21,80 +29,133 @@ final class AudioManager: ObservableObject {
     private var audioFile: AVAudioFile?
     private var sampleRate: Double = 44100
     private var totalFrames: AVAudioFramePosition = 0
-    private var isSeeking: Bool = false
-
-    // Frame where the *current* scheduled segment starts.
-    // Player node's internal sample time resets to 0 every time we stop()+reschedule,
-    // so we add this offset back in to get a real position in the song.
     private var seekFrameOffset: AVAudioFramePosition = 0
 
     private var displayTimer: Timer?
 
+    // MARK: - Init
+
     init(song: Song) {
-        self.song = song
-        
+        self.currentSong = song
+
         engine.attach(playerNode)
-        loadSong()
+        engine.connect(
+            playerNode,
+            to: engine.mainMixerNode,
+            format: nil
+        )
+
+        try? engine.start()
+
+        loadSongFile(song)
     }
 
-    private func loadSong() {
+    // MARK: - Song Management
+
+    func loadSong(_ song: Song) {
+
+        guard currentSong.id != song.id else {
+            return
+        }
+
+        let wasPlaying = isPlaying
+
+        playerNode.stop()
+        stopDisplayTimer()
+
+        isPlaying = false
+
+        currentSong = song
+
+        currentTime = 0
+        duration = 0
+
+        scrubProgress = 0
+        isScrubbing = false
+
+        seekFrameOffset = 0
+
+        loadSongFile(song)
+
+        if wasPlaying {
+            play()
+        }
+    }
+
+    func loadRandomSong(for genre: String) {
+
+        guard let randomSong =
+            SongLibrary.songs
+                .filter({ $0.genre == genre })
+                .randomElement()
+        else {
+            return
+        }
+
+        loadSong(randomSong)
+    }
+
+    private func loadSongFile(_ song: Song) {
+
         guard let url = Bundle.main.url(
             forResource: song.audioFile,
-            withExtension: "mp3")
-        else {
+            withExtension: "mp3"
+        ) else {
             print("Song not found")
             return
         }
 
         do {
             let file = try AVAudioFile(forReading: url)
+
             audioFile = file
             sampleRate = file.fileFormat.sampleRate
             totalFrames = file.length
+
             duration = Double(totalFrames) / sampleRate
 
-            engine.connect(playerNode, to: engine.mainMixerNode, format: file.processingFormat)
-            try engine.start()
-
             scheduleFile(from: 0)
+
         } catch {
             print("Failed to load song: \(error.localizedDescription)")
         }
     }
+    
+    func nextSong() {
 
-    private func scheduleFile(from frame: AVAudioFramePosition) {
-        guard let file = audioFile, totalFrames - frame > 0 else { return }
+        guard let currentIndex =
+            SongLibrary.songs.firstIndex(where: {
+                $0.id == currentSong.id
+            })
+        else {
+            return
+        }
 
-        seekFrameOffset = frame
-        let framesToPlay = AVAudioFrameCount(totalFrames - frame)
+        let nextIndex =
+            (currentIndex + 1) % SongLibrary.songs.count
 
-        playerNode.scheduleSegment(
-            file,
-            startingFrame: frame,
-            frameCount: framesToPlay,
-            at: nil
+        loadSong(
+            SongLibrary.songs[nextIndex]
         )
     }
 
-    private func handlePlaybackFinished() {
-        stopDisplayTimer()
-
-        isPlaying = false
-        currentTime = 0
-
-        playerNode.stop()
-        scheduleFile(from: 0)
-    }
+    // MARK: - Playback Controls
 
     func togglePlayback() {
         guard audioFile != nil else { return }
+
         isPlaying ? pause() : play()
     }
 
-    private func play() {
+    func play() {
+
         do {
-            try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default)
-            try AVAudioSession.sharedInstance().setActive(true)
+            try AVAudioSession.sharedInstance()
+                .setCategory(.playback, mode: .default)
+
+            try AVAudioSession.sharedInstance()
+                .setActive(true)
+
         } catch {
             print(error.localizedDescription)
         }
@@ -104,18 +165,39 @@ final class AudioManager: ObservableObject {
         }
 
         playerNode.play()
+
         isPlaying = true
+
         startDisplayTimer()
     }
 
-    private func pause() {
+    func pause() {
+
         playerNode.pause()
+
         isPlaying = false
+
         stopDisplayTimer()
+
         currentTime = currentPlaybackTime()
     }
 
+    private func handlePlaybackFinished() {
+
+        stopDisplayTimer()
+
+        isPlaying = false
+        currentTime = 0
+
+        playerNode.stop()
+
+        scheduleFile(from: 0)
+    }
+
+    // MARK: - Seeking
+
     func seek(to fraction: Double) {
+
         guard totalFrames > 0 else { return }
 
         let clamped = min(max(fraction, 0), 1)
@@ -137,17 +219,62 @@ final class AudioManager: ObservableObject {
         }
     }
 
+    func handleScrubbing(_ editing: Bool) {
+
+        if editing {
+
+            isScrubbing = true
+
+            scrubProgress = progress
+
+        } else {
+
+            seek(to: scrubProgress)
+
+            isScrubbing = false
+        }
+    }
+
     private func currentPlaybackTime() -> TimeInterval {
+
         guard let nodeTime = playerNode.lastRenderTime,
-              let playerTime = playerNode.playerTime(forNodeTime: nodeTime) else {
+              let playerTime = playerNode.playerTime(
+                forNodeTime: nodeTime
+              )
+        else {
             return Double(seekFrameOffset) / sampleRate
         }
 
         let elapsedFrames = seekFrameOffset + playerTime.sampleTime
+
         return Double(elapsedFrames) / sampleRate
     }
 
+    private func scheduleFile(from frame: AVAudioFramePosition) {
+
+        guard let file = audioFile,
+              totalFrames - frame > 0
+        else {
+            return
+        }
+
+        seekFrameOffset = frame
+
+        let framesToPlay =
+            AVAudioFrameCount(totalFrames - frame)
+
+        playerNode.scheduleSegment(
+            file,
+            startingFrame: frame,
+            frameCount: framesToPlay,
+            at: nil
+        )
+    }
+
+    // MARK: - Timer
+
     private func startDisplayTimer() {
+
         stopDisplayTimer()
 
         displayTimer = Timer.scheduledTimer(
@@ -156,7 +283,12 @@ final class AudioManager: ObservableObject {
         ) { [weak self] _ in
 
             Task { @MainActor [weak self] in
-                guard let self, self.isPlaying else { return }
+
+                guard let self,
+                      self.isPlaying
+                else {
+                    return
+                }
 
                 let playbackTime = min(
                     self.currentPlaybackTime(),
@@ -173,29 +305,84 @@ final class AudioManager: ObservableObject {
     }
 
     private func stopDisplayTimer() {
+
         displayTimer?.invalidate()
         displayTimer = nil
     }
 
+    // MARK: - Computed Properties
+
     var progress: Double {
-        guard duration > 0 else { return 0 }
+
+        guard duration > 0 else {
+            return 0
+        }
+
         return min(currentTime / duration, 1)
     }
 
-    var elapsedText: String { Self.format(time: currentTime) }
+    var sliderProgress: Double {
+        isScrubbing ? scrubProgress : progress
+    }
+
+    var progressBinding: Binding<Double> {
+
+        Binding(
+            get: {
+                self.sliderProgress
+            },
+            set: {
+                self.scrubProgress = $0
+            }
+        )
+    }
+
+    var elapsedText: String {
+        Self.format(time: currentTime)
+    }
 
     var remainingText: String {
-        guard duration > 0 else { return "0:00" }
-        return "-" + Self.format(time: max(duration - currentTime, 0))
+
+        guard duration > 0 else {
+            return "0:00"
+        }
+
+        return "-" + Self.format(
+            time: max(duration - currentTime, 0)
+        )
     }
 
-    private static func format(time: TimeInterval) -> String {
-        guard time.isFinite else { return "0:00" }
+    // MARK: - Helpers
+
+    private static func format(
+        time: TimeInterval
+    ) -> String {
+
+        guard time.isFinite else {
+            return "0:00"
+        }
+
         let totalSeconds = Int(time.rounded(.down))
-        return String(format: "%d:%02d", totalSeconds / 60, totalSeconds % 60)
+
+        return String(
+            format: "%d:%02d",
+            totalSeconds / 60,
+            totalSeconds % 60
+        )
     }
+
+    // MARK: - Deinit
 
     deinit {
         displayTimer?.invalidate()
     }
+}
+
+// MARK: - Preview
+
+extension AudioManager {
+
+    static let preview = AudioManager(
+        song: SongLibrary.songs[0]
+    )
 }
