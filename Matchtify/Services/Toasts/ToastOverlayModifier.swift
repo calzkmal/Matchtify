@@ -31,13 +31,3 @@ struct ToastOverlayModifier: ViewModifier {
             }
     }
 }
-
-extension View {
-    func toastOverlay(_ toastManager: ToastManager) -> some View {
-        modifier(
-            ToastOverlayModifier(
-                toastManager: toastManager
-            )
-        )
-    }
-}

@@ -386,12 +386,3 @@ final class AudioManager: ObservableObject {
         displayTimer?.invalidate()
     }
 }
-
-// MARK: - Preview
-
-extension AudioManager {
-
-    static let preview = AudioManager(
-        song: SongLibrary.songs[0]
-    )
-}

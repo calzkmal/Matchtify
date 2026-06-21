@@ -49,13 +49,3 @@ struct SongLibrary {
 
     }()
 }
-
-extension SongLibrary {
-    static var randomSong: Song {
-        guard let song = songs.randomElement() else {
-            fatalError("No songs found in SongLibrary")
-        }
-
-        return song
-    }
-}
