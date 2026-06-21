@@ -59,7 +59,7 @@ struct TopPickCardView: View {
                         
                         Text(song.title)
                             .font(.title2.bold())
-                            .lineLimit(2)
+                            .lineLimit(1)
                         
                         Text(song.artist)
                             .font(.headline)
