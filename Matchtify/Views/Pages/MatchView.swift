@@ -9,23 +9,21 @@ import SwiftUI
 
 struct MatchView: View {
     @StateObject
-    private var swipeModel = SwipeableCardsView.Model(
+    private var swipeModel = SwipeableCardsViewModel(
         cards: SongLibrary.songs.map {
             SwipeableCardsView.CardModel(song: $0)
         }
     )
     
+    @Environment(AppState.self)
+    private var appState
+    
     // AudioManager setup
     @EnvironmentObject var audioManager: AudioManager
     var onNext: () -> Void = {}
     
-    // Button state
-    enum SelectedAction {
-        case dislike
-        case favorite
-        case like
-    }
-    @State private var selectedAction: SelectedAction?
+    // Popup profile
+    @State private var showProfileSheet = false
     
     // Setup Genre List
     @State private var selectedGenre = "All"
@@ -50,11 +48,19 @@ struct MatchView: View {
                     
                     Spacer()
                     
-                    Image("ProfilePicture")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 40, height: 40)
-                        .clipShape(Circle())
+                    Button {
+                        showProfileSheet = true
+                    } label: {
+                        Image("ProfilePicture")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 40, height: 40)
+                            .clipShape(Circle())
+                    }
+                    .sheet(isPresented: $showProfileSheet) {
+                        ProfileSheetView()
+                            .presentationSizing(.page)
+                    }
                 }
                 
                 // MARK: Scrollable Genres
@@ -106,122 +112,90 @@ struct MatchView: View {
                     audioManager: audioManager,
                     action: { model in
                         model.reset()
-                    },
-                    onCardSwiped: {
-                        selectedAction = nil
-                        onNext()
-                    },
-                    onSwipeDirection: { direction in
-
-                        switch direction {
-                        case .left:
-                            selectedAction = .dislike
-
-                        case .right:
-                            selectedAction = .like
-
-                        case .up:
-                            selectedAction = .favorite
-
-                        case .none:
-                            break
-                        }
                     }
                 )
                 
                 // MARK: Three Buttons
                 HStack (spacing: 24) {
+                    
                     // Dislike
                     Button {
-                        performSwipe(.dislike)
+                        swipeModel.performSwipe(.dislike)
                     } label: {
                         Image(systemName: "hand.thumbsdown")
                             .font(.system(.title, weight: .medium))
-                            .foregroundStyle(selectedAction == .dislike
+                            .foregroundStyle(swipeModel.previewAction == .dislike
                                 ? Color.white
                                 : Color.primary
                             )
                             .frame(width: 56, height: 56)
                     }
                     .buttonStyle(.glassProminent)
-                    .tint(selectedAction == .dislike
+                    .tint(swipeModel.previewAction == .dislike
                           ? .indigo
                           : Color.secondary.opacity(0.5)
                     )
+                    .scaleEffect(
+                        swipeModel.previewAction == .dislike ? 1.15 : 1
+                    )
+                    .animation(.spring, value: swipeModel.previewAction)
                     .clipShape(Circle())
                     
                     // Add to favorite
                     Button {
-                        performSwipe(.favorite)
+                        swipeModel.performSwipe(.favorite)
                     } label: {
                         Image(systemName: "heart")
                             .font(.system(.title2, weight: .medium))
-                            .foregroundStyle(selectedAction == .favorite
+                            .foregroundStyle(swipeModel.previewAction == .favorite
                                 ? Color.white
                                 : Color.primary
                             )
                             .frame(width: 40, height: 40)
                     }
                     .buttonStyle(.glassProminent)
-                    .tint(selectedAction == .favorite
+                    .tint(swipeModel.previewAction == .favorite
                           ? .indigo
                           : Color.secondary.opacity(0.5)
                     )
+                    .scaleEffect(
+                        swipeModel.previewAction == .favorite ? 1.15 : 1
+                    )
+                    .animation(.spring, value: swipeModel.previewAction)
                     .clipShape(Circle())
                     
                     // Like
                     Button {
-                        performSwipe(.like)
+                        swipeModel.performSwipe(.like)
                     } label: {
                         Image(systemName: "hand.thumbsup")
                             .font(.system(.title, weight: .medium))
-                            .foregroundStyle(selectedAction == .like
+                            .foregroundStyle(swipeModel.previewAction == .like
                                 ? Color.white
                                 : Color.primary
                             )
                             .frame(width: 56, height: 56)
                     }
                     .buttonStyle(.glassProminent)
-                    .tint(selectedAction == .like
+                    .tint(swipeModel.previewAction == .like
                           ? .indigo
                           : Color.secondary.opacity(0.5)
                     )
+                    .scaleEffect(
+                        swipeModel.previewAction == .like ? 1.15 : 1
+                    )
+                    .animation(.spring, value: swipeModel.previewAction)
                     .clipShape(Circle())
                 }
             }
             .frame(maxHeight: .infinity, alignment: .top)
-            .padding(.horizontal, 24)
-        }
-    }
-    
-    func performSwipe(
-        _ action: SelectedAction
-    ) {
-        selectedAction = action
-
-        switch action {
-
-        case .dislike:
-            swipeModel.swipeLeft {
-                selectedAction = nil
-                onNext()
-            }
-
-        case .favorite:
-            swipeModel.swipeUp {
-                selectedAction = nil
-                onNext()
-            }
-
-        case .like:
-            swipeModel.swipeRight {
-                selectedAction = nil
-                onNext()
-            }
+            .padding(.horizontal)
         }
     }
 }
 
 #Preview {
-    MatchView().environmentObject(AudioManager.preview)
+    MatchView()
+        .environmentObject(AudioManager.preview)
+        .environment(AppState())
 }

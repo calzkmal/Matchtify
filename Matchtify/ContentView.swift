@@ -11,40 +11,29 @@ struct ContentView: View {
     @StateObject private var audioManager =
         AudioManager(song: SongLibrary.songs[0])
     
-    private let totalSteps = 4
-
-    @AppStorage("hasCompletedOnboarding")
-    private var hasCompletedOnboarding = false
-
-    @State private var screen: AppScreen = .splash
-    @State private var currentStep = 1
-
-    init() {
-        let completedOnboarding = UserDefaults.standard.bool(
-            forKey: "hasCompletedOnboarding"
-        )
-        _screen = State(initialValue: completedOnboarding ? .home : .splash)
-    }
+    @State private var
+    appState = AppState()
 
     var body: some View {
         Group {
-            switch screen {
+            switch appState.screen {
+
             case .splash:
                 SplashScreen {
-                    hasCompletedOnboarding = true
-                    currentStep = 1
-                    screen = .match
+                    appState.screen = .onboarding
                 }
-            case .match:
+
+            case .onboarding:
                 OnboardingView(
                     currentStep: Binding(
-                        get: { currentStep },
+                        get: {
+                            appState.currentStep
+                        },
                         set: { newValue in
-                            if newValue > totalSteps {
-                                currentStep = 1
-                                screen = .home
+                            if newValue > OnboardingModel.totalSteps {
+                                appState.finishOnboarding()
                             } else {
-                                currentStep = newValue
+                                appState.currentStep = newValue
                             }
                         }
                     ),
@@ -52,22 +41,17 @@ struct ContentView: View {
                         audioManager.nextSong()
                     },
                     onSkip: {
-                        currentStep = 1
-                        screen = .home
+                        appState.finishOnboarding()
                     }
                 )
-            case .home:
+
+            case .main:
                 MainTabView()
             }
         }
         .environmentObject(audioManager)
+        .environment(appState)
     }
-}
-
-private enum AppScreen {
-    case splash
-    case match
-    case home
 }
 
 #Preview {

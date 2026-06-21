@@ -173,13 +173,22 @@ final class AudioManager: ObservableObject {
 
     func pause() {
 
-        playerNode.pause()
+        let pausedTime = currentPlaybackTime()
+
+        let pausedFrame = AVAudioFramePosition(
+            pausedTime * sampleRate
+        )
+
+        playerNode.stop()
+
+        scheduleFile(from: pausedFrame)
+
+        seekFrameOffset = pausedFrame
+        currentTime = pausedTime
 
         isPlaying = false
 
         stopDisplayTimer()
-
-        currentTime = currentPlaybackTime()
     }
 
     private func handlePlaybackFinished() {
@@ -376,13 +385,4 @@ final class AudioManager: ObservableObject {
     deinit {
         displayTimer?.invalidate()
     }
-}
-
-// MARK: - Preview
-
-extension AudioManager {
-
-    static let preview = AudioManager(
-        song: SongLibrary.songs[0]
-    )
 }

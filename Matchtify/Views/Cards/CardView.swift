@@ -10,6 +10,12 @@ import SwiftUI
 struct CardView: View {
     @EnvironmentObject var audioManager: AudioManager
 
+    @State
+    private var highlightTask: Task<Void, Never>?
+    
+    @State
+    private var isHighlighted = false
+    
     let song: Song
 
     var body: some View {
@@ -23,10 +29,19 @@ struct CardView: View {
                     .clipShape(
                         RoundedRectangle(cornerRadius: 16)
                     )
-                    .padding(.horizontal, 24)
+                    .padding(.horizontal, 28)
                 
                 Button {
                     audioManager.togglePlayback()
+                    isHighlighted = true
+                    highlightTask?.cancel()
+                    highlightTask = Task {
+                        try? await Task.sleep(for: .seconds(0.5))
+
+                        await MainActor.run {
+                            isHighlighted = false
+                        }
+                    }
                 } label: {
                     Image(
                         systemName:
@@ -35,13 +50,16 @@ struct CardView: View {
                             : "play.fill"
                     )
                     .font(.largeTitle)
-                    .foregroundStyle(Color.primary)
-                    .frame(width: 80,height: 80)
+                    .foregroundStyle(
+                        isHighlighted ? Color.white : Color.primary
+                    )
+                    .frame(width: 80, height: 80)
                 }
                 .buttonStyle(.glassProminent)
                 .tint(
-                    Color.secondary.opacity(0.5)
+                    isHighlighted ? Color.indigo : Color.secondary.opacity(0.8)
                 )
+                .animation(.easeInOut(duration: 0.25), value: isHighlighted)
                 .clipShape(Circle())
             }
 
@@ -74,7 +92,7 @@ struct CardView: View {
                 .disabled(
                     audioManager.duration == 0
                 )
-                .padding(.horizontal, 24)
+                .padding(.horizontal, 28)
 
                 HStack {
                     Text(
@@ -85,19 +103,19 @@ struct CardView: View {
                         audioManager.remainingText
                     )
                 }
-                .padding(.horizontal, 24)
+                .padding(.horizontal, 28)
                 .font(.caption)
                 .foregroundStyle(.secondary)
             }
         }
-        .padding(.vertical, 24)
+        .padding(.vertical, 20)
         .background(
             RoundedRectangle(cornerRadius: 20)
                 .fill(.background)
         )
         .overlay {
             RoundedRectangle(
-                cornerRadius: 20
+                cornerRadius: 24
             )
             .stroke(
                 .primary.opacity(0.2),

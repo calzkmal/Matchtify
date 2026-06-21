@@ -18,7 +18,7 @@ struct ToastOverlayModifier: ViewModifier {
                 if toastManager.isVisible,
                    let message = toastManager.message {
 
-                    ToastView(message: message)
+                    ToastComponent(message: message)
                         .padding(.bottom, 32)
                         .transition(
                             .asymmetric(
@@ -29,15 +29,5 @@ struct ToastOverlayModifier: ViewModifier {
                         )
                 }
             }
-    }
-}
-
-extension View {
-    func toastOverlay(_ toastManager: ToastManager) -> some View {
-        modifier(
-            ToastOverlayModifier(
-                toastManager: toastManager
-            )
-        )
     }
 }
