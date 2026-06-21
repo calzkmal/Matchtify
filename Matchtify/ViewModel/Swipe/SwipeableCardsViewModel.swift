@@ -38,6 +38,25 @@ final class SwipeableCardsViewModel: ObservableObject {
         swipedCards = []
     }
 
+    var previewAction: SwipeAction? {
+
+        let threshold: CGFloat = 40
+
+        if dragState.height < -threshold {
+            return .favorite
+        }
+
+        if dragState.width > threshold {
+            return .like
+        }
+
+        if dragState.width < -threshold {
+            return .dislike
+        }
+
+        return nil
+    }
+    
     func updateTopCardSwipeDirection(
         _ direction: SwipeDirection
     ) {

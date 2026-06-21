@@ -52,8 +52,11 @@ extension SwipeableCardsView {
                     gesture.translation
             }
             .onEnded { _ in
-                if model.dragState.height < -swipeThreshold {
+                if allowsSwipeUp &&
+                    model.dragState.height < -swipeThreshold {
+
                     onSwipeDirection?(.up)
+
                     model.swipe(
                         .up,
                         completion: onCardSwiped

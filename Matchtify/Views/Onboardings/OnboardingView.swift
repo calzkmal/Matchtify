@@ -17,8 +17,6 @@ struct OnboardingView: View {
     var onNext: () -> Void = {}
     var onSkip: () -> Void = {}
 
-    let totalSteps: Int = 4
-
     @StateObject
     private var swipeModel = SwipeableCardsViewModel(
         cards: SongLibrary.songs.map {
@@ -36,7 +34,7 @@ struct OnboardingView: View {
                 // MARK: Progress Bar
                 VStack(spacing: 8) {
                     HStack {
-                        ForEach(1...totalSteps, id: \.self) { step in
+                        ForEach(1...OnboardingModel.totalSteps, id: \.self) { step in
                             RoundedRectangle(cornerRadius: 4)
                                 .fill(
                                     step <= currentStep
@@ -48,7 +46,7 @@ struct OnboardingView: View {
                     }
 
                     HStack {
-                        Text("Step \(currentStep) of \(totalSteps)")
+                        Text("Step \(currentStep) of \(OnboardingModel.totalSteps)")
                             .font(.callout)
                             .foregroundStyle(Color.secondary)
 
@@ -79,55 +77,63 @@ struct OnboardingView: View {
                         model.reset()
                     },
                     onCardSwiped: {
-                        selectedAction = nil
+                        currentStep += 1
                         onNext()
                     },
-                    onSwipeDirection: { direction in
-
-                        switch direction {
-                        case .left:
-                            selectedAction = .dislike
-
-                        case .right:
-                            selectedAction = .like
-
-                        case .up:
-                            break
-                            
-                        case .none:
-                            break
-                        }
-                    }
+                    allowsSwipeUp: false,
                 )
 
                 // MARK: Action Buttons
                 HStack(spacing: 16) {
+                    
+                    // Left button
                     Button {
-                        swipeModel.performSwipe(.dislike)
-                        currentStep += 1
-                        onNext()
+                        swipeModel.performSwipe(.dislike) {
+                            currentStep += 1
+                            onNext()
+                        }
                     } label: {
                         Image(systemName: "xmark")
                             .font(.system(.title, weight: .medium))
-                            .foregroundStyle(Color.primary)
+                            .foregroundStyle(swipeModel.previewAction == .dislike
+                                             ? Color.white
+                                             : Color.primary)
                             .frame(width: 64, height: 64)
                     }
                     .buttonStyle(.glassProminent)
-                    .tint(Color.secondary.opacity(0.5))
+                    .tint(swipeModel.previewAction == .dislike
+                          ? .indigo
+                          : Color.secondary.opacity(0.5)
+                    )
+                    .scaleEffect(
+                        swipeModel.previewAction == .dislike ? 1.15 : 1
+                    )
+                    .animation(.spring, value: swipeModel.previewAction)
                     .clipShape(Circle())
-
+                    
+                    // Right button
                     Button {
-                        swipeModel.performSwipe(.like)
-                        currentStep += 1
-                        onNext()
+                        swipeModel.performSwipe(.like) {
+                            currentStep += 1
+                            onNext()
+                        }
                     } label: {
                         Image(systemName: "checkmark")
                             .font(.system(.title, weight: .medium))
-                            .foregroundStyle(Color.white)
+                            .foregroundStyle(swipeModel.previewAction == .like
+                                             ? Color.white
+                                             : Color.primary)
                             .frame(width: 64, height: 64)
                     }
                     .buttonStyle(.glassProminent)
-                    .tint(.indigo)
+                    .tint(swipeModel.previewAction == .like
+                          ? .indigo
+                          : Color.secondary.opacity(0.5)
+                    )
+                    .scaleEffect(
+                        swipeModel.previewAction == .like ? 1.15 : 1
+                    )
+                    .animation(.spring, value: swipeModel.previewAction)
                     .clipShape(Circle())
                 }
             }
@@ -136,7 +142,7 @@ struct OnboardingView: View {
     }
 
     private func advanceStep() {
-        guard currentStep < totalSteps else { return }
+        guard currentStep < OnboardingModel.totalSteps else { return }
         currentStep += 1
     }
 }

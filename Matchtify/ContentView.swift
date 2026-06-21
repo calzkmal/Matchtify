@@ -10,8 +10,6 @@ import SwiftUI
 struct ContentView: View {
     @StateObject private var audioManager =
         AudioManager(song: SongLibrary.songs[0])
-    
-    private let totalSteps = 4
 
     @AppStorage("hasCompletedOnboarding")
     private var hasCompletedOnboarding = false
@@ -40,7 +38,7 @@ struct ContentView: View {
                     currentStep: Binding(
                         get: { currentStep },
                         set: { newValue in
-                            if newValue > totalSteps {
+                            if newValue > OnboardingModel.totalSteps {
                                 currentStep = 1
                                 screen = .home
                             } else {
