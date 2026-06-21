@@ -27,6 +27,9 @@ struct MatchView: View {
     }
     @State private var selectedAction: SelectedAction?
     
+    // Popup profile
+    @State private var showProfileSheet = false
+    
     // Setup Genre List
     @State private var selectedGenre = "All"
     private let genres =
@@ -50,11 +53,19 @@ struct MatchView: View {
                     
                     Spacer()
                     
-                    Image("ProfilePicture")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 40, height: 40)
-                        .clipShape(Circle())
+                    Button {
+                        showProfileSheet = true
+                    } label: {
+                        Image("ProfilePicture")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 40, height: 40)
+                            .clipShape(Circle())
+                    }
+                    .sheet(isPresented: $showProfileSheet) {
+                        ProfileSheetView()
+                            .presentationSizing(.page)
+                    }
                 }
                 
                 // MARK: Scrollable Genres

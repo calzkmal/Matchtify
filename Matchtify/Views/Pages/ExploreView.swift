@@ -13,7 +13,23 @@ struct ExploreView: View {
             Color(uiColor: .secondarySystemBackground)
                 .ignoresSafeArea()
             
-            Text("Hello World")
+            // MARK: Main Container
+            VStack {
+                // MARK: Header Area
+                HStack {
+                    Text("Explore")
+                        .font(.largeTitle.bold())
+                    
+                    Spacer()
+                    
+                    Image("ProfilePicture")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 40, height: 40)
+                        .clipShape(Circle())
+                }
+            }
+            .padding(.horizontal, 24)
         }
     }
 }

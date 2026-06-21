@@ -1,5 +1,5 @@
 //
-//  AlbumRow.swift
+//  AlbumRowComponent.swift
 //  Matchtify
 //
 //  Created by Calzy Akmal Indyramdhani on 17/06/26.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct AlbumRow: View {
+struct AlbumRowComponent: View {
 
     let assets: [String]
     let alignment: Alignment

@@ -18,7 +18,7 @@ struct ToastOverlayModifier: ViewModifier {
                 if toastManager.isVisible,
                    let message = toastManager.message {
 
-                    ToastView(message: message)
+                    ToastComponent(message: message)
                         .padding(.bottom, 32)
                         .transition(
                             .asymmetric(
