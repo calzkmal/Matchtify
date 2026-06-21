@@ -21,6 +21,9 @@ struct AlbumRowComponent: View {
                     .aspectRatio(1, contentMode: .fill)
                     .frame(width: 104, height: 104)
                     .clipped()
+                    .clipShape(
+                        RoundedRectangle(cornerRadius: 4)
+                    )
             }
         }
         .frame(maxWidth: .infinity, alignment: alignment)
