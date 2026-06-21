@@ -10,30 +10,40 @@ import SwiftUI
 struct GenreCardView: View {
     let song: Song
 
+    // Toast
+    @State private var
+    toastManager = ToastManager()
+    
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-
-            Image(song.albumImage)
-                .resizable()
-                .scaledToFill()
-                .frame(width: 200, height: 200)
-                .clipShape(
-                    RoundedRectangle(cornerRadius: 8)
-                )
-
-            VStack (alignment: .leading, spacing: 4){
-                Text(song.title)
-                    .font(.subheadline)
-                    .fontWeight(.semibold)
-                    .lineLimit(1)
+        Button {
+            toastManager.show(song.title)
+        } label: {
+            VStack(alignment: .leading, spacing: 12) {
                 
-                Text(song.artist)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                    .lineLimit(1)
+                Image(song.albumImage)
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 200, height: 200)
+                    .clipShape(
+                        RoundedRectangle(cornerRadius: 8)
+                    )
+                
+                VStack (alignment: .leading, spacing: 4){
+                    Text(song.title)
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(Color.primary)
+                        .lineLimit(1)
+                    
+                    Text(song.artist)
+                        .font(.caption)
+                        .foregroundStyle(Color.secondary)
+                        .lineLimit(1)
+                }
             }
+            .frame(width: 200, alignment: .leading)
         }
-        .frame(width: 200, alignment: .leading)
+        .toastOverlay(toastManager)
     }
 }
 
